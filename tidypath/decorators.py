@@ -140,7 +140,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
                     fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
                 elif isinstance(fig, plotly_figure):
                     if ext == "html":
-                        fig.write_html(saving_path, **save_opts)
+                        fig.write_html("{}.html".format(saving_path), **save_opts)
                     else:
                         fig.write_image(saving_path, format=ext, **save_opts)
                 else:
