@@ -1,6 +1,6 @@
 # PhD-utils
 
-For people that have to compute and store a large variety of data and/or perform statistical inference.
+For people that have to compute and store a large variety of data.
 
 ## Keep your files tidy!
 
