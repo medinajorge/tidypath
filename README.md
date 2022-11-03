@@ -34,15 +34,5 @@ def plot_results(*args, **kwargs):
 - Only difference is the output.
 - Decorator adds the same arguments as `savedata` plus `return_fig` (`bool`).
 
-## Estimate confidence intervals
-The subpackage `utils.stats.rtopy.resample` allows calls to the `resample` [R package](https://cran.r-project.org/web/packages/resample/resample.pdf).
-- Provides CI and permutation tests.
-- CIs can account narrowness bias, skewness and other errors in CI estimation, as indicated in the [article](https://arxiv.org/abs/1411.5279)
-
-## Numba-accelerated permutation tests
-Subpackage `utils.stats.tests.permutation`. 
-- Faster permutation tests for the means and medians. Includes paired case.
-- Scheme for adding other statistics in a numba-compatible way (`_permutation_test_2sample_paired` and `_permutation_test_2sample_not_paired` functions)
-
 ## Example
 Please check `Example.ipynb`
