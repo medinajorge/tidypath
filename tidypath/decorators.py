@@ -139,7 +139,10 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
                 if isinstance(fig, mpl_figure):
                     fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
                 elif isinstance(fig, plotly_figure):
-                    fig.write_image(saving_path, format=ext, **save_opts)
+                    if ext == "html":
+                        fig.write_html(saving_path, **save_opts)
+                    else:
+                        fig.write_image(saving_path, format=ext, **save_opts)
                 else:
                     raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'plotly.grap_objs._figure.Figure'.")
                     

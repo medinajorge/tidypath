@@ -19,20 +19,20 @@ import time
 
 def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray, pd.core.series.Series), iterable_maxsize=3):
     """x -> string version of x"""
-    if x is None:
-        return "none"
-    elif isinstance(x, str):
-        return x
-    elif isinstance(x, float):
+    if isinstance(x, float):
         if x == int(x):
             return str(int(x))
         else:
             return str(round(x, ndigits=ndigits)).replace('.', '--')
     elif isinstance(x, int):
         return str(x)
+    elif callable(x):
+        return x.__name__
+    elif isinstance(x, dict):
+        return dict_to_id(x, ndigits=ndigits)
     elif isinstance(x, iterables):
         if len(x) >= iterable_maxsize:
-            return str(len(x))
+            return "{}-values".format(str(len(x)))
         else:
             return '-'.join([encoder(sub_x) for sub_x in x])
     else:
