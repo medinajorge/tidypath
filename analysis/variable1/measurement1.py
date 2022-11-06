@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import savedata, savefig
+from tidypath import savedata, savefig
 
 @savedata("x+z+kwargs")
 def slow_computation(x, y, *args, z=1, **kwargs):

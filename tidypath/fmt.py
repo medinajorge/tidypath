@@ -29,7 +29,10 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray, pd.core.series.Ser
     elif callable(x):
         return x.__name__
     elif isinstance(x, dict):
-        return dict_to_id(x, ndigits=ndigits)
+        if len(x) >= iterable_maxsize:
+            return "{}-values".format(str(len(x)))
+        else:
+            return dict_to_id(x, ndigits=ndigits)
     elif isinstance(x, iterables):
         if len(x) >= iterable_maxsize:
             return "{}-values".format(str(len(x)))

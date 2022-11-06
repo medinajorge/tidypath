@@ -55,7 +55,7 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
     elif callable(keys_or_function):
         func = keys_or_function
     else:
-        raise TypeError(f"{keys_or_function} is neither a function or a keys iterable.")
+        func = None
         
     if load_opts_default_save:
         load_opts = {**save_opts, **load_opts}
@@ -66,6 +66,7 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
             key_opts = classify_call_attrs(func, args, kwargs)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes)
+            import pdb; pdb.set_trace()
             
             if Path(saving_path).exists() and not overwrite:
                 return getattr(storage, f"load_{ext}")(saving_path, **load_opts)
@@ -123,7 +124,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
     elif callable(keys_or_function):
         func = keys_or_function
     else:
-        raise TypeError(f"{keys_or_function} is neither a function or a keys iterable.")
+        func = None
         
     mpl_save_defaults = dict(bbox_inches="tight")
         
@@ -140,7 +141,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
                     fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
                 elif isinstance(fig, plotly_figure):
                     if ext == "html":
-                        fig.write_html("{}.html".format(saving_path), **save_opts)
+                        fig.write_html(saving_path, **save_opts)
                     else:
                         fig.write_image(saving_path, format=ext, **save_opts)
                 else:
