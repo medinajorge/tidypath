@@ -32,7 +32,7 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray, pd.core.series.Ser
         if len(x) >= iterable_maxsize:
             return "{}-values".format(str(len(x)))
         else:
-            return dict_to_id(x, ndigits=ndigits)
+            return dict_to_id(x, ndigits=ndigits, join_char="-")
     elif isinstance(x, iterables):
         if len(x) >= iterable_maxsize:
             return "{}-values".format(str(len(x)))
@@ -63,11 +63,11 @@ def getopt_printer(opts):
     """Prints getopt input in a readable way."""
     print('\n'.join(f'{opt} => {arg}' for opt, arg in (("Args", "Values"), *opts)))
     
-def dict_to_id(*args, ndigits=2, **kwargs):
+def dict_to_id(*args, ndigits=2, join_char="_", **kwargs):
     """Generate ID of the form k1-v1_k2-v2... for k_i, v_i keys and values of the dictionary d or the kwargs."""
     key_formatter = lambda k: k.replace("_", "-")
     d = args[0] if len(args) > 0 else kwargs
-    return "_".join([f"{key_formatter(k)}-{encoder(d[k], ndigits=ndigits)}" for k in sorted(d.keys())])
+    return join_char.join([f"{key_formatter(k)}-{encoder(d[k], ndigits=ndigits)}" for k in sorted(d.keys())])
 
 def id_to_dict(identifier):
     """Inverse of dict_to_id."""

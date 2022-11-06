@@ -66,7 +66,6 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
             key_opts = classify_call_attrs(func, args, kwargs)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes)
-            import pdb; pdb.set_trace()
             
             if Path(saving_path).exists() and not overwrite:
                 return getattr(storage, f"load_{ext}")(saving_path, **load_opts)
@@ -76,6 +75,7 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
                 return result
 
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save"])
+        wrapper.__out__ = "data"
         return wrapper
         
     if func is None:
@@ -153,6 +153,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
                 return
             
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "return_fig"])
+        wrapper.__out__ = "figure"
         return wrapper
     
     if func is None:
