@@ -17,14 +17,15 @@ else:
     from matplotlib.figure import Figure as mpl_figure
     import matplotlib.pyplot as plt
 
-
-from . import storage
+from . import storage, config
 from .paths import datapath, figpath
 from .inspection import classify_call_attrs, merge_wrapper_signatures
 from ._helper import merge_nested_dict
 
-def savedata(keys_or_function=None, ext="lzma", include_classes="file",
-             overwrite=False, save=True, keys="kwargs", load_opts_default_save=True,  #defaults for extra arguments
+
+def savedata(keys_or_function=None, include_classes="file",
+             ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
+             overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
              load_opts={}, **save_opts):    
     """
     Decorator for automatically saving output and then loading cached data.
@@ -35,6 +36,7 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
     NOTE (!) decorated funcs will have extra arguments:
         - save (bool).                 whether to save the output of the function.
         - overwrite (bool).            whether to overwrite the saved version.
+        - funcname_in_filename(bool)   whether to include funcname in the filename.
         - keys (dict/str/iterable)   · dict:     specifies filename of the form k1-v1_k2-v2_...kn_vn. 
                                                  k_i do not have to be arguments of the function.
                                      · str:       key of a keyword argument. Example: keys = 'x'.
@@ -73,10 +75,10 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
         
     def _savedata(func):  
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
-            saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes)
+            saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
             
             if Path(saving_path).exists() and not overwrite:
                 return getattr(storage, f"load_{ext}")(saving_path, **load_opts)
@@ -85,7 +87,7 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
                 return result
 
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename"])
         wrapper.__out__ = "data"
         return wrapper
         
@@ -95,8 +97,9 @@ def savedata(keys_or_function=None, ext="lzma", include_classes="file",
         return _savedata(func)
     
 
-def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig=False,
-            keys="kwargs", overwrite=True, save=True,  #defaults for extra arguments
+def savefig(keys_or_function=None, include_classes="file", 
+            ext=config.EXT_DEFAULT_FIG, keys=config.KEYS_DEFAULT_FIG, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_FIG, return_fig=config.RETURN_FIG_DEFAULT,
+            overwrite=True, save=True,  #defaults for extra arguments
             **save_opts):    
     """
     Generates figsaver decorator.
@@ -106,6 +109,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
         - return_fig (bool)            whether to return the figure (output of function).
         - save (bool).                 whether to save the figure.
         - overwrite (bool).            whether to overwrite the saved version.
+        - funcname_in_filename(bool)   whether to include funcname in the filename.
         - keys (dict/str/iterable)   · dict:     specifies filename of the form k1-v1_k2-v2_...kn_vn. 
                                                  k_i do not have to be arguments of the function.
                                      · str:       key of a keyword argument. Example: keys = 'x'.
@@ -141,11 +145,11 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
         
     def _savefig(func):  
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
             fig = func(*args, **kwargs)
             key_opts = classify_call_attrs(func, args, kwargs)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
-            saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes)
+            saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
             
             if not Path(saving_path).exists() or overwrite:
                 if isinstance(fig, mpl_figure):
@@ -164,7 +168,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
             else:
                 return
             
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "return_fig"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "return_fig", "funcname_in_filename"])
         wrapper.__out__ = "figure"
         return wrapper
     
@@ -228,14 +232,5 @@ class timer_class(object):
         t1 = time.time()
         result = self.func(*args, **kwargs)
         dt = time.time() - t1
-        print('{} ran in: {} sec'.format(self.func.__name__, dt))
+        print('{} ran in: {:.2f} s = {:.2f} min = {:.2f} h'.format(self.func.__name__, dt,dt/60,dt/3600))
         return result
-
-    
-def identity(orig_func):
-    """Wrapper that does not do anything."""
-    @wraps(orig_func)
-    def wrapper(*args, **kwargs):
-        result = orig_func(*args, **kwargs)
-        return result
-    return wrapper

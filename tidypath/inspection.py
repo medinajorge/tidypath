@@ -81,7 +81,7 @@ def merge_wrapper_signatures(wrapper, wrapper_params):
     sigw = inspect.signature(wrapper, follow_wrapped=False)
     params = tuple(sig.parameters.values())
     params_extra = tuple(p for p_name, p in sigw.parameters.items() if p_name in wrapper_params)
-    if params[-1].kind.name == "VAR_KEYWORD": # f(any_args, **kwargs)
+    if len(params) > 0 and params[-1].kind.name == "VAR_KEYWORD": # f(any_args, **kwargs)
         params_full = (*params[:-1], *params_extra, params[-1])
     else:
         params_full = (*params, *params_extra)

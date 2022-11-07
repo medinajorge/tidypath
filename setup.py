@@ -26,9 +26,8 @@ setup(
         'numpy',
         'pandas',
     ],
-    extras_require=[
-        'matplotlib',
-        'plotly',
-        'kaleido',
-    ],
+    extras_require={
+        "matplotlib": "matplotlib",
+        "plotly": ["plotly", "kaleido"],
+    },
 )
