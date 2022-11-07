@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tidypath',
-    version='1.0.11',
+    version='1.0.12',
     author="Jorge Medina Hernández",
     author_email='medinahdezjorge@gmail.com',
     packages=['tidypath'],
