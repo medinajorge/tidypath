@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tidypath import savedata, savefig
 
-@savedata("x+z+kwargs")
+@savedata("x+z+kwargs") # alternative: @savedata("all-y")
 def slow_computation(x, y, *args, z=1, **kwargs):
     """
     Function you want to compute once and store keeping your folders tidy => save time and record your results in memory. 

@@ -4,7 +4,7 @@ Analyze variables passed to functions, parent class, merge wrapper and wrapped s
 import inspect
 import functools
 
-def classify_call_attrs(func, args, kwargs):
+def classify_call_attrs(func, args, kwargs, add_pos_only_to_all=False):
     """
     Classify function args and kwargs passed during function call
     
@@ -21,7 +21,8 @@ def classify_call_attrs(func, args, kwargs):
         "kwargs_full"      =>  kws_defaults + kws.
         "pos_only"         =>  length of *args (position-only arguments)
         "args"             =>  position-or-keyword arguments (are called static in the code).
-        "all"              =>  all attrs.
+        "all"              =>  add_pos_only_to_all == False => all attrs except pos_only: kwargs_full + args
+                               else                         => all attrs: kwargs_full + args + pos_only
     """
     code = func.__code__
     num_kwonly = code.co_kwonlyargcount
@@ -57,7 +58,8 @@ def classify_call_attrs(func, args, kwargs):
     else:
         pos_only_name = "*pos_only"
     pos_only = {pos_only_name: len(args) - num_static - num_kwargs_positional}
-    attrs.update(pos_only)
+    if add_pos_only_to_all:
+        attrs.update(pos_only)
     
     key_opts = dict(kwargs_defaults = kwargs_defaults,
                     kwargs = kwargs,      

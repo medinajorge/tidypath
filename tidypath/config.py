@@ -99,6 +99,7 @@ class _EnvReloader(object):
         KEYS_DEFAULT = _readenv("TIDYPATH_KEYS_DEFAULT", str, "kwargs_full")
         KEYS_DEFAULT_DATA = _readenv("TIDYPATH_KEYS_DEFAULT_DATA", str, KEYS_DEFAULT)
         KEYS_DEFAULT_FIG = _readenv("TIDYPATH_KEYS_DEFAULT_FIG", str, KEYS_DEFAULT)
+        KEYS_ADD_POSONLY_TO_ALL = _readenv("TIDYPATH_KEYS_ADD_POSONLY_TO_ALL", to_bool, False)
         
         EXT_DEFAULT_DATA = _readenv("TIDYPATH_EXT_DEFAULT_DATA", str, "lzma")
         EXT_DEFAULT_FIG = _readenv("TIDYPATH_EXT_DEFAULT_FIG", str, "png")

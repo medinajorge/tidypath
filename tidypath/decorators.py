@@ -8,11 +8,11 @@ from collections.abc import Iterable
 from importlib.util import find_spec
 from ._helper import NoFigure
 if find_spec("plotly") is None:
-    plotly_figure = NoFigure()
+    plotly_figure = NoFigure
 else:
     from plotly.graph_objs._figure import Figure as plotly_figure
 if find_spec("matplotlib") is None:
-    mpl_figure = NoFigure()
+    mpl_figure = NoFigure
 else:
     from matplotlib.figure import Figure as mpl_figure
     import matplotlib.pyplot as plt
@@ -45,12 +45,11 @@ def savedata(keys_or_function=None, include_classes="file",
                                                  "kwargs_full"      =>  kws_defaults + kws.
                                                  "pos_only"         =>  length of *args
                                                  "args"             =>  attrs != **kwargs, *args.
-                                                 "all"              =>  all attrs.
-                                                 can combine options using "+". Example: "args+rest", "x+y+kwargs".
+                                                 "all"              if config.KEYS_ADD_POSONLY_TO_ALL  =>  all attrs
+                                                                    else                               =>  all attrs except pos_only: kwargs_full + args
+                                                 can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
-                                                 RECOMMENDED OPTION.
-                                         
-        
+                                                 
     Attrs:
         - function:                function to which the decorator is applied
         - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext
@@ -76,7 +75,7 @@ def savedata(keys_or_function=None, include_classes="file",
     def _savedata(func):  
         @wraps(func)
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, **kwargs):
-            key_opts = classify_call_attrs(func, args, kwargs)
+            key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
             
@@ -118,11 +117,10 @@ def savefig(keys_or_function=None, include_classes="file",
                                                  "kwargs_full"      =>  kws_defaults + kws.
                                                  "pos_only"         =>  length of *args. Also self and cls are counted as pos_only arguments.
                                                  "args"             =>  attrs != **kwargs, *args.
-                                                 "all"              =>  all attrs.
-                                                 can combine options using "+". Example: "args+rest", "x+y+kwargs".
-                                     · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
-                                                 RECOMMENDED OPTION.
-                                         
+                                                 "all"              if config.KEYS_ADD_POSONLY_TO_ALL  =>  all attrs
+                                                                    else                               =>  all attrs except pos_only: kwargs_full + args
+                                                 can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
+                                     · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".                                         
         
     Attrs:
         - function:                function to which the decorator is applied
@@ -147,7 +145,7 @@ def savefig(keys_or_function=None, include_classes="file",
         @wraps(func)
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
             fig = func(*args, **kwargs)
-            key_opts = classify_call_attrs(func, args, kwargs)
+            key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
             saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
             
