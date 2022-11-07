@@ -4,7 +4,7 @@ For people that have to compute and store a large variety of data and/or figures
 
 ## Keep your files tidy!
 
-Don't spend time creating directories, deciding filenames, etc. Decorators `savefig` & `savedata` will do it for you.
+Don't spend time creating directories, deciding filenames, saving, loading, etc. Decorators `savefig` & `savedata` will do it for you.
 
 - `savedata` computes output and stores it in the first function call. Future calls reads it from memory. Default LZMA compression
 - `savefig`  saves output figure.
