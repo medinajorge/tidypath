@@ -1,16 +1,16 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='tidypath',
-    version='1.0.0',
+    version='1.0.3',
     author="Jorge Medina Hernández",
     author_email='medinahdezjorge@gmail.com',
-    packages=find_packages('tidypath'),
-    package_dir={'': 'tidypath'},
+    packages=['tidypath'],
+    #package_dir={'': 'tidypath'},
     url='https://github.com/medinajorge/tidypath',
-    download_url='https://github.com/medinajorge/tidypath/archive/refs/tags/v1.0.1.tar.gz'
+    download_url='https://github.com/medinajorge/tidypath/archive/refs/tags/v1.0.1.tar.gz',
     description="Automatically store/load data in a tidy, efficient way.",
-    long_description="Avoid spending time and lines of code creating directories, deciding filenames, etc. Tidypath automatically does it in an efficient, user-friendly way.",
+    long_description=open('README.md').read(),
     keywords=['tidy', 'project organization', 'project', 'organization', 'path', 'storage'],
     classifiers = [
         "Programming Language :: Python :: 3",
