@@ -34,5 +34,19 @@ def plot_results(*args, **kwargs):
 - Only difference is the output.
 - Decorator adds the same arguments as `savedata` plus `return_fig` (`bool`).
 
+### Adaptable to code modifications
+Caching data depends on the specific variables set to store, since they define the filenames. Suppose we want to add a new variable, but already computed results are still useful. For instance, a variable `method` indicating a new method for computing the results. We can
+
+1. Modify the variables to record in the `savedata` decorator:
+
+    `@savedata("x+z")`     =>    `savedata("x+z+method")`
+
+1. Assign `method='original'` to all existing pre-computed files:
+    `add_arg(slow_computation, method='original')`.
+    
+3. Now access is granted for the computed data, and data corresponding to new methods is stored in separate files.
+
+Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is loaded after modifying function arguments.
+
 ## Example
 Please check `Example.ipynb`
