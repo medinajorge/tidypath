@@ -122,7 +122,7 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
                         if check_first_k:
                             update_file = 0
                             while update_file not in ["y", "yes", "n", "no"]:
-                                update_file = input("Filename change example:\n'{}' -> '{}'\nProceed? [y/n]".format(file, new_filename)).lower()
+                                update_file = input("Filename change example:\n\n'{}' -> '{}'\n\nProceed? [y/n]".format(file, new_filename)).lower()
                             check_first_k = False
                         if update_file in ["y", "yes"]:                    
                             os.rename(os.path.join(directory, file), 
