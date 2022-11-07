@@ -52,7 +52,8 @@ def savedata(keys_or_function=None, include_classes="file",
                                                  
     Attrs:
         - function:                function to which the decorator is applied
-        - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext
+        - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext.
+                                   Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
         - include_classes:         include class tree in saving_path.
         - load_opts:               kws for storage.load_ext. default kws are those of 'saving_options', those specified update saving_options dict.
         - save_opts:               kws for storage.save_ext
@@ -125,6 +126,7 @@ def savefig(keys_or_function=None, include_classes="file",
     Attrs:
         - function:                function to which the decorator is applied
         - ext:                     storing extension. 'eps' recommended for articles.
+                                   Supported: any extension supported by matplotlib/plotly. Example: 'png', 'eps', 'html' (plotly), etc.
         - include_classes:         include class tree in saving_path.
         - save_opts:               kws for saving function.
         - rest:                    default behavior for decorated funcs extra arguments (above).

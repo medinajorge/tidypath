@@ -102,6 +102,10 @@ save_json = create_saving_func(open, json.dump, 'json', cls=NpEncoder)
 save_bz2 = create_saving_func(bz2.BZ2File, pickle.dump, 'pbz2')
 save_lzma = create_saving_func(lzma.LZMAFile, pickle.dump, 'lzma')
 
+def save_npz(arr, filename, parent_dir=parent_dir, key="arr"):
+    np.savez_compressed(os.path.join(parent_dir, filename), **{key:arr})
+    return
+
 def save_csv(data, filename, parent_dir=parent_dir, **df_kwargs):
     """
     If data is a numpy array => if 2D => data
@@ -154,14 +158,14 @@ def create_loading_func(file_opener, file_loader, extra_processing=None, apply_d
 def int_keys(dictionary):
      return {int(key):val for key,val in dictionary.items()}
 
+load_json = create_loading_func(open, json.load, extra_processing=[int_keys], apply_defaults={'int_keys':True})
+load_bz2 = create_loading_func(bz2.BZ2File, pickle.load)
+load_lzma = create_loading_func(lzma.LZMAFile, pickle.load)
+
 def load_npz(path, key=None):
     data = np.load(path)
     key = [*data.keys()][0] if key is None else key
     return data[key]
-
-load_json = create_loading_func(open, json.load, extra_processing=[int_keys], apply_defaults={'int_keys':True})
-load_bz2 = create_loading_func(bz2.BZ2File, pickle.load)
-load_lzma = create_loading_func(lzma.LZMAFile, pickle.load)
 
 def load_csv(path, mode="pandas", **kwargs):
     if mode == "pandas":
