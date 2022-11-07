@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tidypath',
-    version='1.0.4',
+    version='1.0.8',
     author="Jorge Medina Hernández",
     author_email='medinahdezjorge@gmail.com',
     packages=['tidypath'],
@@ -14,10 +14,10 @@ setup(
     long_description_content_type='text/markdown',
     keywords=['tidy', 'project organization', 'project', 'organization', 'path', 'storage'],
     classifiers = [
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3",            
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: GNU Affero General Public License v3",
-        "Operating System :: OS Independent",        
-        "Development Status :: 5 - Production/Stable",
+        "Operating System :: OS Independent",    
         "Topic :: Scientific/Engineering",
         "Topic :: Office/Business",
         "Intended Audience :: Science/Research",
@@ -26,6 +26,7 @@ setup(
         'numpy',
         'pandas', 
         'matplotlib',
-        'plotly'
+        'plotly',
+        'kaleido',
     ],
 )

@@ -7,6 +7,7 @@ from functools import wraps
 from collections.abc import Iterable
 from plotly.graph_objs._figure import Figure as plotly_figure
 from matplotlib.figure import Figure as mpl_figure
+import matplotlib.pyplot as plt
 from . import storage
 from .paths import datapath, figpath
 from .inspection import classify_call_attrs, merge_wrapper_signatures
@@ -139,6 +140,7 @@ def savefig(keys_or_function=None, ext="png", include_classes="file", return_fig
             if not Path(saving_path).exists() or overwrite:
                 if isinstance(fig, mpl_figure):
                     fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
+                    plt.close(fig)
                 elif isinstance(fig, plotly_figure):
                     if ext == "html":
                         fig.write_html(saving_path, **save_opts)
