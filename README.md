@@ -52,4 +52,5 @@ Caching data depends on the specific variables set to store, since they define t
 Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is loaded after modifying function arguments.
 
 ## Example
-Please check https://github.com/medinajorge/tidypath/blob/master/tests/Example.ipynb
+- Defining functions: https://github.com/medinajorge/tidypath/blob/master/tests/analysis/variable1/measurement1.py
+- Calling functions & modifying args: https://github.com/medinajorge/tidypath/blob/master/tests/Example.ipynb
