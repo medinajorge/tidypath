@@ -189,11 +189,15 @@ def delete_arg(func=None, arg=None, directory=None, check_first=True, overwrite=
         raise ValueError(f"arg {arg} not valid. Must be a string or an iterable of strings.")
         
     def process_filename(file, k_name, k, v):
-        if k_name in file:
-            arg_val_encoded = "{}{}_".format(k_name, file.split(k_name)[1].split("_")[0])
-            return file.replace(arg_val_encoded, "")
+        if file.startswith(f"{k_name}-"):
+            return "_".join(file.split("_")[1:])
         else:
-            return None
+            mid_file_k_name = f"_{k_name}-"
+            if mid_file_k_name in file:
+                arg_val_encoded = "{}{}".format(mid_file_k_name, file.split(mid_file_k_name)[1].split("_")[0])
+                return file.replace(arg_val_encoded, "")
+            else:
+                return None
     filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **arg_dict)
     return 
 
@@ -213,12 +217,16 @@ def modify_arg(func=None, directory=None, check_first=True, overwrite=False, **a
                                Examples:   Modify an arg -> two filenames are the same -> one remains.
     """
     def process_filename(file, k_name, k, v):
-        import pdb; pdb.set_trace()
-        if k_name in file:
-            arg_val_encoded = "{}{}".format(k_name, file.split(k_name)[1].split("_")[0])
-            return file.replace(arg_val_encoded, dict_to_id({k:v}))
+        if file.startswith(f"{k_name}-"):
+            return "_".join([dict_to_id({k:v})] + file.split("_")[1:])
         else:
-            return None
+            mid_file_k_name = f"_{k_name}-"
+            if mid_file_k_name in file:
+                arg_val_encoded = "{}{}".format(mid_file_k_name, file.split(mid_file_k_name)[1].split("_")[0])
+                return file.replace(arg_val_encoded, "_{}".format(dict_to_id({k:v})))
+            else:
+                return None
+
     filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **args)
     return 
 
