@@ -9,6 +9,8 @@ Don't spend time creating directories, deciding filenames, etc. Decorators `save
 - `savedata` computes output and stores it in the first function call. Future calls reads it from memory. Default LZMA compression
 - `savefig`  saves output figure.
 
+Although recommended, it is not needed to start a new project using `tidypath`. You can continue using your previous code and apply `tidypath` on new code.
+
 ### savedata
 Example function `slow_computation` in module `package.subpackages.module`
 ```
@@ -21,7 +23,7 @@ def slow_computation(x, y, *args, z=1, **kwargs):
 2. Choose the variables to record in the filenames.
 3. Optionally, choose file extension and other specifications.
 4. Result will be saved at `data/subpackages/module/slow_computation/x-'x'_z-'z'_.lzma` ('x' = value of x passed to `slow_computation` during call)
-5. If you want to recompute and overwrite, you can pass `overwrite=True` to `slow_computation`. The decorator adds the arguments: `save`, `overwrite` and `keys`.
+5. If you want to recompute and overwrite, you can pass `overwrite=True` to `slow_computation`. The decorator adds the arguments: `save`, `overwrite`, `keys` and `funcname_in_filename`.
 
 ### savefig
 ```
