@@ -168,7 +168,7 @@ def savefig(keys_or_function=None, include_classes="file",
             else:
                 return
             
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "return_fig", "funcname_in_filename"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "return_fig"])
         wrapper.__out__ = "figure"
         return wrapper
     
