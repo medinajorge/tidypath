@@ -1,4 +1,4 @@
-# PhD-utils
+# Tidypath
 
 For people that have to compute and store a large variety of data.
 
