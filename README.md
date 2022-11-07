@@ -1,6 +1,6 @@
 # Tidypath
 
-For people that have to compute and store a large variety of data.
+For people that have to compute and store a large variety of data and/or figures.
 
 ## Keep your files tidy!
 
