@@ -21,7 +21,7 @@ def slow_computation(x, y, *args, z=1, **kwargs):
 ```
 1. Apply to function (result of any type).
 2. Choose the variables to record in the filenames.
-3. Optionally, choose file extension and other specifications.
+3. Optionally, choose file extension and other specifications. Supported: `lzma` (default), `bz2`, `npz`, `csv`, `JSON`.
 4. Result will be saved at `data/subpackages/module/slow_computation/x-'x'_z-'z'_.lzma` ('x' = value of x passed to `slow_computation` during call)
 5. If you want to recompute and overwrite, you can pass `overwrite=True` to `slow_computation`. The decorator adds the arguments: `save`, `overwrite`, `keys` and `funcname_in_filename`.
 
@@ -32,8 +32,8 @@ def plot_results(*args, **kwargs):
     ...
     return figure
 ```
-- Same steps as  `savedata`.
-- Only difference is the output.
+- Same steps as  `savedata`. Only difference is the output type.
+- Supports `matplotlib` and `plotly` and all figure extensions (`png`, `eps`, ...) including `html` (`plotly`).
 - Decorator adds the same arguments as `savedata` plus `return_fig` (`bool`).
 
 ### Adaptable to code modifications
