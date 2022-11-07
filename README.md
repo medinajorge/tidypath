@@ -47,7 +47,7 @@ Caching data depends on the specific variables set to store, since they define t
 
         add_arg(slow_computation, method='original')
     
-3. Now access is granted for the computed data, and data corresponding to new methods is stored in separate files.
+3. Now access is granted for the already computed data, and data corresponding to new methods will be stored in separate files.
 
 Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is loaded after modifying function arguments.
 
