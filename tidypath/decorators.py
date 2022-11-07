@@ -5,9 +5,19 @@ import inspect
 from pathlib import Path
 from functools import wraps
 from collections.abc import Iterable
-from plotly.graph_objs._figure import Figure as plotly_figure
-from matplotlib.figure import Figure as mpl_figure
-import matplotlib.pyplot as plt
+from importlib.util import find_spec
+from ._helper import NoFigure
+if find_spec("plotly") is None:
+    plotly_figure = NoFigure()
+else:
+    from plotly.graph_objs._figure import Figure as plotly_figure
+if find_spec("matplotlib") is None:
+    mpl_figure = NoFigure()
+else:
+    from matplotlib.figure import Figure as mpl_figure
+    import matplotlib.pyplot as plt
+
+
 from . import storage
 from .paths import datapath, figpath
 from .inspection import classify_call_attrs, merge_wrapper_signatures

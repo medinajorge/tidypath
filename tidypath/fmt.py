@@ -1,9 +1,7 @@
 """
 Encode dictionaries in strings and decode them. Useful for automatically asigning filenames.
-Includes function f: pd.DataFrame -> latex table.
 """
 import numpy as np
-import pandas as pd
 from copy import deepcopy
 import os
 import sys
@@ -17,7 +15,7 @@ import time
 """                                                  I. Getopt utils                                                       """
 ##############################################################################################################################
 
-def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray, pd.core.series.Series), iterable_maxsize=3):
+def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=3):
     """x -> string version of x"""
     if isinstance(x, float):
         if x == int(x):
@@ -131,37 +129,3 @@ def id_renamer(update_dict, parentDir, key=None, mode="add"):
             os.rename(old_filename, new_filename)
             r += 1
     return r
-
-
-##############################################################################################################################
-"""                                                     II. Other                                                          """
-##############################################################################################################################
-
-
-def latex_table(df, index=False, **kwargs):
-    """Pandas DataFrame -> Latex table."""
-    col_format = "c" if isinstance(df, pd.core.series.Series) else "c"*len(df.columns)
-    if index:
-        col_format += "c"
-    table_replacements = (("\\toprule", "\\toprule "*2),
-                          ("\\bottomrule", "\\bottomrule "*2)
-    )
-    text_replacements = (("\\textbackslash ", "\\"),
-                         ("\{", "{"), 
-                         ("\}", "}"),
-                         ("\$", "$"),
-                         ("\_", "_"),
-                         ("\\textasciicircum ", "^")
-    )
-    table_formatter = lambda x:  reduce(lambda a, kv: a.replace(*kv), table_replacements, x)
-    text_formatter = lambda x: reduce(lambda a, kv: a.replace(*kv), text_replacements, x)
-    formatter = lambda x: text_formatter(table_formatter(x))
-    print(formatter(df.to_latex(index=index, column_format=col_format, **kwargs)))
-    return
-
-def fig_saver(filename):
-    """Figure saver without overwriting."""
-    i = 0
-    while os.path.exists('{}{:d}.png'.format(filename, i)):
-        i += 1
-    plt.savefig('{}{:d}.png'.format(filename, i))

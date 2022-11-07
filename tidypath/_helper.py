@@ -27,4 +27,10 @@ def merge_nested_dict(d, keys, key_default=None):
         d_default = d[key_default]
         d_merged.update({k: d_default[k] for k in keys_in_default})
         return d_merged
-    
+
+class NoFigure():
+    """
+    Fill type for plotly/matplotlib figures, if the package is not available.
+    Allows tidypath.savefig to work with matplotlib/plotly when the other one is not present.
+    """
+    pass
