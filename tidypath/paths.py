@@ -21,12 +21,6 @@ from .inspection import get_class_that_defined_method
 dataDir = "data"
 figDir = "figs"
 
-def join_paths(*paths):
-    path = paths[0]
-    for p in paths[1:]:
-        path = os.path.join(path, p)
-    return path
-
 def module_path(func=None, depth=3, include_classes="file", skip=1):
     """
     returns module path and func_name.
@@ -56,12 +50,12 @@ def module_path(func=None, depth=3, include_classes="file", skip=1):
             class_tree = ""
     else:
         class_tree = ""
-    path = join_paths(*module.split(".")[1:], class_tree, func_name)
+    path = os.path.join(*module.split(".")[1:], class_tree, func_name)
     return path
 
 def saving_path(Dir, ext, keys={}, subfolder="", return_dir=False, funcname_in_filename=False, **kwargs):
     """Tree path: subfolder -> module -> (classes) -> func_name."""
-    parentDir = join_paths(Dir, subfolder, module_path(**kwargs))
+    parentDir = os.path.join(Dir, subfolder, module_path(**kwargs))
     Path(parentDir).mkdir(exist_ok=True, parents=True)   
     if return_dir:
         return parentDir
@@ -252,11 +246,11 @@ class ClassPath(Organizer):
     @classmethod
     def create_dir(cls, dirKey, depth=2):
         """Creates tree: parentDir -> subfolder -> inheritance_tree -> func_name"""
-        path = cls.join_paths(getattr(cls, f"{dirKey}Dir"),
-                              cls.subfolder,
-                              cls.inheritance_path(),
-                              sys._getframe(depth).f_code.co_name
-                             )
+        path = os.path.join(getattr(cls, f"{dirKey}Dir"),
+                            cls.subfolder,
+                            cls.inheritance_path(),
+                            sys._getframe(depth).f_code.co_name
+                           )
         Path(path).mkdir(exist_ok=True, parents=True)
         return path
         
