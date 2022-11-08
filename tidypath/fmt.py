@@ -2,13 +2,7 @@
 Encode dictionaries in strings and decode them. Useful for automatically asigning filenames.
 """
 import numpy as np
-from copy import deepcopy
 import os
-import sys
-from pathlib import Path
-from collections.abc import Iterable
-from functools import reduce
-import time
 
 
 ##############################################################################################################################
@@ -38,7 +32,7 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=
             return '-'.join([encoder(sub_x) for sub_x in x])
     else:
         return str(x)
-    
+
 def decoder(x, iterables=(list, tuple, np.ndarray)):
     """string version of x -> x"""
     if x.lower() == "none":
@@ -60,7 +54,7 @@ def decoder(x, iterables=(list, tuple, np.ndarray)):
 def getopt_printer(opts):
     """Prints getopt input in a readable way."""
     print('\n'.join(f'{opt} => {arg}' for opt, arg in (("Args", "Values"), *opts)))
-    
+
 def dict_to_id(*args, ndigits=2, join_char="_", **kwargs):
     """Generate ID of the form k1-v1_k2-v2... for k_i, v_i keys and values of the dictionary d or the kwargs."""
     key_formatter = lambda k: k.replace("_", "-")
@@ -104,7 +98,7 @@ def id_updater(filename, update_dict, mode="add"):
         d = {k: v for k, v in d.items() if k not in update_dict.keys()}
     var_values = [part.split("-") for part in file.split("_")]
     init = "_".join([part[0] for part in var_values if len(part) == 1])
-    ext = os.path.splitext(file)[1] 
+    ext = os.path.splitext(file)[1]
     new_filename = os.path.join(parentDir, f"{init}_{dict_to_id(d)}{ext}")
 
     return new_filename
