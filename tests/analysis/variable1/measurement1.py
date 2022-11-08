@@ -20,7 +20,7 @@ def plot_slow_computation(*args, **kwargs):
     You will always know which function created the figure by looking at the image path:
         figs/subpackages/module/function_name/image
     In this example:
-        data/variable1/measurement1/plot_slow_computation/image.png
+        figs/variable1/measurement1/plot_slow_computation/image.png
     """
     X = slow_computation(*args, **kwargs)
     _ = plt.hist(X, bins=100, density=1)
