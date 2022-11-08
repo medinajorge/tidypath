@@ -41,7 +41,7 @@ Caching data depends on the specific variables set to store, since they define t
 
 1. Modify the variables to record in the `savedata` decorator:
 
-        @savedata("x+z")     =>    savedata("x+z+method")
+        @savedata("x+z")     =>    @savedata("x+z+method")
 
 1. Assign `method='original'` to all existing pre-computed files:
 
