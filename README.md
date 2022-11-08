@@ -41,11 +41,11 @@ Caching data depends on the specific variables set to store, since they define t
 
 1. Modify the variables to record in the `savedata` decorator:
 
-        ```@savedata("x+z")     =>    @savedata("x+z+method")```
+        @savedata("x+z")     =>    @savedata("x+z+method")
 
 1. Assign `method='original'` to all existing pre-computed files:
 
-        ```add_arg(slow_computation, method='original')```
+        add_arg(slow_computation, method='original')
     
 3. Now access is granted for the already computed data, and data corresponding to new methods will be stored in separate files.
 
@@ -56,4 +56,4 @@ Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is
 - [Calling functions & modifying args](https://github.com/medinajorge/tidypath/blob/master/tests/Example.ipynb)
 
 ## Install
-    ```pip install tidypath```
+```pip install tidypath```
