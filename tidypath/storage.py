@@ -15,57 +15,9 @@ import zipfile
 
 parent_dir =  'data'
 
-##############################################################################################################################
-"""                                                  I. Move / delete                                                      """
-##############################################################################################################################
-
-def move_files(keyword, folder=None, parent_dir=parent_dir):
-    """
-    Moves all files in the parent directory starting with a keyword to a folder.
-    Attributes:
-    - keyword: keyword to look for during file matching-
-    - folder: Created folder to store all files matched by the keyword
-    - parend_dir: Initial directory in which the files are contained.
-    """
-    folder = folder if folder is not None else keyword
-    Path(os.path.join(parent_dir, folder)).mkdir(exist_ok=True, parents=True)
-    processed = 0
-    for path in os.listdir(parent_dir):
-        if path == folder:
-            continue
-        else:
-            string_list = [string.split('_') for string in path.split('-')]
-            string_list_flatten = [item for sublist in string_list for item in sublist]
-            if keyword in string_list_flatten:
-                os.rename(os.path.join(parent_dir, path), os.path.join(parent_dir, folder, path))
-                processed += 1
-    return processed
-
-def delete_stdin_files(parent_dir="nuredduna_programmes/stdin_files", extensions=[".e", ".o"]):
-    """
-    Removes files in parent_dir with extensions starting by (or being equal to) a certain character.
-    Originally created to delete nuredduna standard input (stdin) files, of the form python.exxxx (s. error) and python.oxxxx (s. output).
-    """
-    deleted = 0
-    for path in os.listdir(parent_dir):
-        for extension in extensions:
-            if os.path.splitext(path)[1].startswith(extension):
-                os.remove(os.path.join(parent_dir, path))
-                deleted += 1
-    return deleted
-
-
-def empty_trash(binDir='/home/jorgemedina/.local/share/Trash'):
-    deleted = 0
-    for root, dirs, files in os.walk(binDir, topdown=False):
-        for name in files:
-            os.remove(os.path.join(root, name))
-            deleted += 1
-    return deleted
-
 
 ##############################################################################################################################
-"""                                                      II. Save                                                          """
+"""                                                       I. Save                                                          """
 ##############################################################################################################################
 
 class NpEncoder(json.JSONEncoder):
@@ -121,7 +73,7 @@ def save_csv(data, filename, parent_dir=parent_dir, **df_kwargs):
 
 
 ##############################################################################################################################
-"""                                                      III. Load                                                         """
+"""                                                       II. Load                                                         """
 ##############################################################################################################################
 
 def create_loading_func(file_opener, file_loader, extra_processing=None, apply_defaults=None):
@@ -177,7 +129,7 @@ def load_csv(path, mode="pandas", **kwargs):
         
 
 ##############################################################################################################################
-"""                                                   IV. Compression                                                      """
+"""                                                   III. Compression                                                     """
 ##############################################################################################################################
 
 def compress_files(rootDir=parent_dir, extension='.json', compress_to='lzma', min_size=0, loading_key=None):
@@ -193,6 +145,15 @@ def compress_files(rootDir=parent_dir, extension='.json', compress_to='lzma', mi
     
     Returns: Dict containing the name of the files that could not be processed ('bad compression') or those that were corrupted and had to be deleted('deleted files').
     """
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell': # script being run in Jupyter notebook
+            from tqdm.notebook import tqdm
+        elif shell == 'TerminalInteractiveShell': #script being run in iPython terminal
+            from tqdm import tqdm
+    except NameError:
+            from tqdm import tqdm # Probably runing on standard python terminal.
+            
     # Get all the paths with the desired extension and minimum size.
     files = []
 
