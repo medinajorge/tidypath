@@ -100,6 +100,7 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
         
     args_sorted = {k: args[k] for k in sorted(args)}
     abort_changes = False
+    avoid_files = [".ipynb_checkpoints", "__pycache__"]
     for k, v in args_sorted.items():
         check_first_k = deepcopy(check_first)
         if abort_changes:
@@ -107,24 +108,25 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
         else:
             k_name = encoder(k).replace("_", "-")
             for file in os.listdir(directory):
-                new_filename = process_filename(file, k_name, k, v)
-                if new_filename is not None:
-                    new_path = os.path.join(directory, new_filename)
-                    if Path(new_path).exists() and not overwrite:
-                        raise RuntimeError(f"'{new_filename}' already existing before modifying '{file}'. To delete repeated files pass 'overwrite=True'.")
-                    else:
-                        if check_first_k:
-                            update_file = 0
-                            while update_file not in ["y", "yes", "n", "no"]:
-                                update_file = input("Filename change example:\n\n'{}' -> '{}'\n\nProceed? [y/n]".format(file, new_filename)).lower()
-                            check_first_k = False
-                        if update_file in ["y", "yes"]:                    
-                            os.rename(os.path.join(directory, file), 
-                                      os.path.join(directory, new_filename))
+                if file not in avoid_files:
+                    new_filename = process_filename(file, k_name, k, v)
+                    if new_filename is not None:
+                        new_path = os.path.join(directory, new_filename)
+                        if Path(new_path).exists() and not overwrite:
+                            raise RuntimeError(f"'{new_filename}' already existing before modifying '{file}'. To delete repeated files pass 'overwrite=True'.")
                         else:
-                            warnings.warn("Aborted filename changes.", RuntimeWarning)
-                            abort_changes = True
-                            break
+                            if check_first_k:
+                                update_file = 0
+                                while update_file not in ["y", "yes", "n", "no"]:
+                                    update_file = input("Filename change example:\n\n'{}' -> '{}'\n\nProceed? [y/n]".format(file, new_filename)).lower()
+                                check_first_k = False
+                            if update_file in ["y", "yes"]:                    
+                                os.rename(os.path.join(directory, file), 
+                                          os.path.join(directory, new_filename))
+                            else:
+                                warnings.warn("Aborted filename changes.", RuntimeWarning)
+                                abort_changes = True
+                                break
     return
 
 def add_arg(func=None, directory=None, check_first=True, overwrite=False, **args):
