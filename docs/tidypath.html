@@ -1,0 +1,969 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tidypath package &mdash; Tidypath 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tidypath" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Tidypath
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">tidypath</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tidypath package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.config">tidypath.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.decorators">tidypath.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.fmt">tidypath.fmt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.inspection">tidypath.inspection module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.paths">tidypath.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath.storage">tidypath.storage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tidypath">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Tidypath</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">tidypath</a> &raquo;</li>
+        
+      <li>tidypath package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tidypath.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="tidypath-package">
+<h1>tidypath package<a class="headerlink" href="#tidypath-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-tidypath.config">
+<span id="tidypath-config-module"></span><h2>tidypath.config module<a class="headerlink" href="#module-tidypath.config" title="Permalink to this heading">¶</a></h2>
+<p>Config specs for the decorators ‘savedata’, ‘savefig’.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.config.reload_config">
+<span class="sig-prename descclassname"><span class="pre">tidypath.config.</span></span><span class="sig-name descname"><span class="pre">reload_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/config.html#reload_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.config.reload_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reload the configuration from environment variables, if necessary.</p>
+</dd></dl>
+
+</section>
+<section id="module-tidypath.decorators">
+<span id="tidypath-decorators-module"></span><h2>tidypath.decorators module<a class="headerlink" href="#module-tidypath.decorators" title="Permalink to this heading">¶</a></h2>
+<p>Main uses: save and cache data, save figures, change figure color, timing.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.decorators.savedata">
+<span class="sig-prename descclassname"><span class="pre">tidypath.decorators.</span></span><span class="sig-name descname"><span class="pre">savedata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_or_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lzma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwargs_full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcname_in_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_opts_default_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">save_opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/decorators.html#savedata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.decorators.savedata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for automatically saving output and then loading cached data.
+Default behavior:</p>
+<blockquote>
+<div><p>1st function call:   stores the data with extension ‘ext’.
+rest:                loads stored data if the key args passed to the function coincide.</p>
+</div></blockquote>
+<dl>
+<dt>NOTE (!) decorated funcs will have extra arguments:</dt><dd><ul>
+<li><p>save (bool).                 whether to save the output of the function.</p></li>
+<li><p>overwrite (bool).            whether to overwrite the saved version.</p></li>
+<li><p>funcname_in_filename(bool)   whether to include funcname in the filename.</p></li>
+<li><dl>
+<dt>keys (dict/str/iterable)   · dict:     specifies filename of the form <a href="#id31"><span class="problematic" id="id32">k1-v1_k2-v2_</span></a>…kn_vn. </dt><dd><blockquote>
+<div><p>k_i do not have to be arguments of the function.</p>
+</div></blockquote>
+<dl>
+<dt>· str:       key of a keyword argument. Example: keys = ‘x’.</dt><dd><p>“kwargs_defaults”  =&gt;  default kwargs that were not modified.
+“kwargs”           =&gt;  kwargs passed during function call.
+“kwargs_full”      =&gt;  kws_defaults + kws.
+“pos_only”         =&gt;  length of <a href="#id1"><span class="problematic" id="id2">*</span></a>args
+“args”             =&gt;  attrs != <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs, <a href="#id5"><span class="problematic" id="id6">*</span></a>args.
+“all”              if config.KEYS_ADD_POSONLY_TO_ALL  =&gt;  all attrs</p>
+<blockquote>
+<div><p>else                               =&gt;  all attrs except pos_only: kwargs_full + args</p>
+</div></blockquote>
+<p>can combine options using “+” or “-”. Example: “args+z”, “x+y+kwargs”, “all-y”.</p>
+</dd>
+</dl>
+<p>· iterable: containing a combination of the available string keys (above). [“k1”, “k2”] == “k1+k2”.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>function:                function to which the decorator is applied</p></li>
+<li><dl class="simple">
+<dt>ext:                     storing extension. Selects ‘storage’ functions save_ext, load_ext.</dt><dd><p>Supported: ‘lzma’ (default), ‘bz2’, ‘json’, ‘csv’, ‘npz’.</p>
+</dd>
+</dl>
+</li>
+<li><p>include_classes:         include class tree in saving_path.</p></li>
+<li><p>load_opts:               kws for storage.load_ext. default kws are those of ‘saving_options’, those specified update saving_options dict.</p></li>
+<li><p>save_opts:               kws for storage.save_ext</p></li>
+<li><p>load_opts_default_save:  use save_opts as default for load_opts.</p></li>
+<li><p>rest:                    default behavior for decorated funcs extra arguments (above).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: Function decorator</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.decorators.savefig">
+<span class="sig-prename descclassname"><span class="pre">tidypath.decorators.</span></span><span class="sig-name descname"><span class="pre">savefig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_or_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwargs_full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcname_in_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">save_opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/decorators.html#savefig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.decorators.savefig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates figsaver decorator.
+Figure returned by function is automatically saved. Compatible with matplotlib and plotly.</p>
+<dl>
+<dt>NOTE (!) decorated funcs will have extra arguments:</dt><dd><ul>
+<li><p>return_fig (bool)            whether to return the figure (output of function).</p></li>
+<li><p>save (bool).                 whether to save the figure.</p></li>
+<li><p>overwrite (bool).            whether to overwrite the saved version.</p></li>
+<li><p>funcname_in_filename(bool)   whether to include funcname in the filename.</p></li>
+<li><dl>
+<dt>keys (dict/str/iterable)   · dict:     specifies filename of the form <a href="#id33"><span class="problematic" id="id34">k1-v1_k2-v2_</span></a>…kn_vn. </dt><dd><blockquote>
+<div><p>k_i do not have to be arguments of the function.</p>
+</div></blockquote>
+<dl>
+<dt>· str:       key of a keyword argument. Example: keys = ‘x’.</dt><dd><p>“kwargs_defaults”  =&gt;  default kwargs that were not modified.
+“kwargs”           =&gt;  kwargs passed during function call.
+“kwargs_full”      =&gt;  kws_defaults + kws.
+“pos_only”         =&gt;  length of <a href="#id7"><span class="problematic" id="id8">*</span></a>args. Also self and cls are counted as pos_only arguments.
+“args”             =&gt;  attrs != <a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs, <a href="#id11"><span class="problematic" id="id12">*</span></a>args.
+“all”              if config.KEYS_ADD_POSONLY_TO_ALL  =&gt;  all attrs</p>
+<blockquote>
+<div><p>else                               =&gt;  all attrs except pos_only: kwargs_full + args</p>
+</div></blockquote>
+<p>can combine options using “+” or “-”. Example: “args+z”, “x+y+kwargs”, “all-y”.</p>
+</dd>
+</dl>
+<p>· iterable: containing a combination of the available string keys (above). [“k1”, “k2”] == “k1+k2”.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>function:                function to which the decorator is applied</p></li>
+<li><dl class="simple">
+<dt>ext:                     storing extension. ‘eps’ recommended for articles.</dt><dd><p>Supported: any extension supported by matplotlib/plotly. Example: ‘png’, ‘eps’, ‘html’ (plotly), etc.</p>
+</dd>
+</dl>
+</li>
+<li><p>include_classes:         include class tree in saving_path.</p></li>
+<li><p>save_opts:               kws for saving function.</p></li>
+<li><p>rest:                    default behavior for decorated funcs extra arguments (above).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: Function decorator</p>
+</dd></dl>
+
+</section>
+<section id="module-tidypath.fmt">
+<span id="tidypath-fmt-module"></span><h2>tidypath.fmt module<a class="headerlink" href="#module-tidypath.fmt" title="Permalink to this heading">¶</a></h2>
+<p>Encode dictionaries in strings and decode them. Useful for automatically asigning filenames.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.decoder">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterables=(&lt;class</span> <span class="pre">'list'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'tuple'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.decoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>string version of x -&gt; x</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.dict_to_id">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">dict_to_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndigits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join_char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#dict_to_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.dict_to_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate ID of the form k1-v1_k2-v2… for k_i, v_i keys and values of the dictionary d or the kwargs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.encoder">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndigits=2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterables=(&lt;class</span> <span class="pre">'list'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'tuple'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable_maxsize=3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.encoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>x -&gt; string version of x</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.getopt_printer">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">getopt_printer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#getopt_printer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.getopt_printer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints getopt input in a readable way.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.id_renamer">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">id_renamer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'add'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#id_renamer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.id_renamer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies id of files in parentDir by updating the underlying dict.
+Attrs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update_dict: dict to use for updating the id</p></li>
+<li><p>parentDir: folder where files are located.</p></li>
+<li><p>key: string contained in the file for it to be modified.</p></li>
+<li><dl class="simple">
+<dt>mode:   - “add”: add update_dict to the id.</dt><dd><ul>
+<li><p>“delete”: delete update_dict from the id.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Returns #modified files.
+NOTE: If update_dict={} =&gt; filenames will be rearranged according to other_utils.dict_to_id.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.id_to_dict">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">id_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#id_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.id_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse of dict_to_id.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.fmt.id_updater">
+<span class="sig-prename descclassname"><span class="pre">tidypath.fmt.</span></span><span class="sig-name descname"><span class="pre">id_updater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'add'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/fmt.html#id_updater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.fmt.id_updater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies filename by updating the underlying dict.
+Attrs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>filename:    id to be modified</p></li>
+<li><p>update_dict: dict to use for updating the id. if update_dict={} =&gt; filename rearranged according to other_utils.dict_to_id.</p></li>
+<li><dl class="simple">
+<dt>mode:        - “add”:    add update_dict to the id.</dt><dd><ul>
+<li><p>“delete”: delete update_dict from the id.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Returns modified filename.</p>
+</dd></dl>
+
+</section>
+<section id="module-tidypath.inspection">
+<span id="tidypath-inspection-module"></span><h2>tidypath.inspection module<a class="headerlink" href="#module-tidypath.inspection" title="Permalink to this heading">¶</a></h2>
+<p>Analyze variables passed to functions, parent class, merge wrapper and wrapped signatures.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.inspection.classify_call_attrs">
+<span class="sig-prename descclassname"><span class="pre">tidypath.inspection.</span></span><span class="sig-name descname"><span class="pre">classify_call_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_pos_only_to_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/inspection.html#classify_call_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.inspection.classify_call_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classify function args and kwargs passed during function call</p>
+<p>NOTE:  Probably could be done more efficiently relying more on inspect.getargspec(func) or inspect.signature(func), but realized later.
+NOTE2: For position-only arguments f(<a href="#id13"><span class="problematic" id="id14">*</span></a>args),</p>
+<blockquote>
+<div><p>usually referred in the docs as f(pos1, pos2, /, pos_or_kwd,…)  (‘/’ indicates end of position-only-args),
+only provides the number of <a href="#id15"><span class="problematic" id="id16">*</span></a>args.</p>
+</div></blockquote>
+<p>Example: dict()</p>
+<dl>
+<dt>Returns: dict containing</dt><dd><p>“kwargs_defaults”  =&gt;  default kwargs that were not modified.
+“kwargs”           =&gt;  kwargs passed during function call.
+“kwargs_full”      =&gt;  kws_defaults + kws.
+“pos_only”         =&gt;  length of <a href="#id17"><span class="problematic" id="id18">*</span></a>args (position-only arguments)
+“args”             =&gt;  position-or-keyword arguments (are called static in the code).
+“all”              =&gt;  add_pos_only_to_all == False =&gt; all attrs except pos_only: kwargs_full + args</p>
+<blockquote>
+<div><p>else                         =&gt; all attrs: kwargs_full + args + pos_only</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.inspection.delete_cls_self_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.inspection.</span></span><span class="sig-name descname"><span class="pre">delete_cls_self_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/inspection.html#delete_cls_self_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.inspection.delete_cls_self_arg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.inspection.get_class_that_defined_method">
+<span class="sig-prename descclassname"><span class="pre">tidypath.inspection.</span></span><span class="sig-name descname"><span class="pre">get_class_that_defined_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/inspection.html#get_class_that_defined_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.inspection.get_class_that_defined_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.inspection.merge_wrapper_signatures">
+<span class="sig-prename descclassname"><span class="pre">tidypath.inspection.</span></span><span class="sig-name descname"><span class="pre">merge_wrapper_signatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapper_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/inspection.html#merge_wrapper_signatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.inspection.merge_wrapper_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add parameters from the wrapper function (called by &#64;functools.wraps) to its signature.
+Wrapper params are assumed to be keyword-only.</p>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>wrapper:           wrapper function</p></li>
+<li><p>wrapper_params:    params of wrapper to be added to the signature.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tidypath.paths">
+<span id="tidypath-paths-module"></span><h2>tidypath.paths module<a class="headerlink" href="#module-tidypath.paths" title="Permalink to this heading">¶</a></h2>
+<p>Creates paths for automatically organizing files. 
+Allows filename modification: If arg added (deleted) to func =&gt; add (delete) arg to stored function output files.</p>
+<dl class="simple">
+<dt>Two schemes:</dt><dd><ol class="arabic simple">
+<li><p>By module =&gt; Module -&gt; submodules -&gt; class tree (until classes in module by default) -&gt; func</p></li>
+<li><p>By class  =&gt; Class organization is a class to be inherited. Sets path: parentDir -&gt; subfolder (optionally specified) -&gt; inheritance_tree -&gt; func_name.</p></li>
+</ol>
+</dd>
+</dl>
+<ol class="arabic simple">
+<li><p>is the most appropiate.</p></li>
+</ol>
+<dl class="py class">
+<dt class="sig sig-object py" id="tidypath.paths.ClassPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">ClassPath</span></span><a class="reference internal" href="_modules/tidypath/paths.html#ClassPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.ClassPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tidypath.paths.Organizer" title="tidypath.paths.Organizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Organizer</span></code></a></p>
+<p>Updates fig and data dir of the class as follows:
+parentDir -&gt; subfolder -&gt; inheritance_tree -&gt; func_name</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tidypath.paths.ClassPath.create_dataDir">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_dataDir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#ClassPath.create_dataDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.ClassPath.create_dataDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tidypath.paths.ClassPath.create_dir">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirKey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#ClassPath.create_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.ClassPath.create_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates tree: parentDir -&gt; subfolder -&gt; inheritance_tree -&gt; func_name</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tidypath.paths.ClassPath.create_figDir">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_figDir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#ClassPath.create_figDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.ClassPath.create_figDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tidypath.paths.ClassPath.inheritance_path">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inheritance_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#ClassPath.inheritance_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.ClassPath.inheritance_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tidypath.paths.Organizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">Organizer</span></span><a class="reference internal" href="_modules/tidypath/paths.html#Organizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.Organizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tidypath.paths.Organizer.dataDir">
+<span class="sig-name descname"><span class="pre">dataDir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data'</span></em><a class="headerlink" href="#tidypath.paths.Organizer.dataDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tidypath.paths.Organizer.figDir">
+<span class="sig-name descname"><span class="pre">figDir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'figs'</span></em><a class="headerlink" href="#tidypath.paths.Organizer.figDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tidypath.paths.Organizer.subfolder">
+<span class="sig-name descname"><span class="pre">subfolder</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tidypath.paths.Organizer.subfolder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.add_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">add_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#add_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.add_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes new function args into filename.
+Useful when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Adding a new arg to a function wrapped by savedata. Allows loading the available data without recomputing.</p></li>
+<li><p>Modifying figure names produced by a function.</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>args (kwargs):       new arguments to encode into filename.</p></li>
+<li><p>func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):  whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):    whether to overwrite files when in conflict.</dt><dd><p>Example:   add an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.datapath">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">datapath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lzma'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#datapath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.datapath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.delete_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">delete_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#delete_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.delete_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete encoded function arg from filename.
+Useful when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Deleting an arg from a function wrapped by savedata. Allows loading the available data without recomputing.</p></li>
+<li><p>Modifying figure names produced by a function.</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>arg (str or iterable):       key of an arg (k in k=v) to be deleted, or an iterable containing keys.</p></li>
+<li><p>func (callable):             function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):             directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):          whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):            whether to overwrite files when in conflict.</dt><dd><p>Examples:   Delete an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.figpath">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">figpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#figpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.figpath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.filename_modifier">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">filename_modifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#filename_modifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.filename_modifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base function for adding/deleting/modifying function args encoded in the output filenames.</p>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>process_filename:    function f(file, k_name, k, v) -&gt; new_filename. </dt><dd><ul>
+<li><p>k, v are the key and value of an arg.</p></li>
+<li><p>k_name is the string encoding of k. (replace ‘_’ -&gt; ‘-‘)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):  whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):    whether to overwrite files when in conflict.</dt><dd><p>Examples:   add/modify/delete an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+<li><p>args (kwargs):       Arguments to add/delete/modify in the filename.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.modify_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">modify_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#modify_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.modify_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified encoded function arg from filename.
+Useful when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Renaming an arg value with a more suitable one (more comprehensible, better defined…), leaving the func output unchanged. Allows loading the available data without recomputing.</p></li>
+<li><p>Modifying figure names produced by a function.</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>args (kwargs):       arguments to modify in the filename.</p></li>
+<li><p>func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):  whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):    whether to overwrite files when in conflict.</dt><dd><p>Examples:   Modify an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.module_path">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">module_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#module_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.module_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns module path and func_name.</p>
+<dl class="simple">
+<dt>include_classes:   ‘file’: path: module -&gt; class tree contained in func file -&gt; func_name.</dt><dd><p>‘all’: path: module -&gt; full class tree -&gt; func_name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.paths.saving_path">
+<span class="sig-prename descclassname"><span class="pre">tidypath.paths.</span></span><span class="sig-name descname"><span class="pre">saving_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcname_in_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#saving_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.paths.saving_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tree path: subfolder -&gt; module -&gt; (classes) -&gt; func_name.</p>
+</dd></dl>
+
+</section>
+<section id="module-tidypath.storage">
+<span id="tidypath-storage-module"></span><h2>tidypath.storage module<a class="headerlink" href="#module-tidypath.storage" title="Permalink to this heading">¶</a></h2>
+<p>Handle data (store/move/delete/load…)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tidypath.storage.NpEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">NpEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#NpEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.NpEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONEncoder</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tidypath.storage.NpEncoder.default">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#NpEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.NpEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement this method in a subclass such that it returns
+a serializable object for <code class="docutils literal notranslate"><span class="pre">o</span></code>, or calls the base implementation
+(to raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>).</p>
+<p>For example, to support arbitrary iterators, you could
+implement default like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="c1"># Let the base class default method raise the TypeError</span>
+    <span class="k">return</span> <span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.compress_files">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">compress_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lzma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loading_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#compress_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.compress_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches in a directory and all its subdirectories files with a certain extension and compresses them.</p>
+<p>Attributes:
+- rootDir: The root directory.
+- extension: Extension setting which files should be compressed. Available options: ‘.json’, ‘.npz’.
+- compress_to: File type after compression. Available options: ‘lzma’, ‘bz2’ (or pbz2).
+- min_size: Minimum size for applying compression (in MB).
+- loading_key: Key for retrieving the data in a npz file. If None, retrieves the data corresponding to the first key.</p>
+<p>Returns: Dict containing the name of the files that could not be processed (‘bad compression’) or those that were corrupted and had to be deleted(‘deleted files’).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.create_loading_func">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">create_loading_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_processing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#create_loading_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.create_loading_func" title="Permalink to this definition">¶</a></dt>
+<dd><ul class="simple">
+<li><p>extra_processing = List of process that could be applied to the file.</p></li>
+<li><p>apply_defaults = dict:{str: bool}. The key is set as a function variable, the value indicates whether to apply the process named by the key.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.create_saving_func">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">create_saving_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_writer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saving_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#create_saving_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.create_saving_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.int_keys">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">int_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#int_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.int_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.load_bz2">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">load_bz2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.load_bz2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.load_csv">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">load_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pandas'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#load_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.load_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.load_json">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">load_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.load_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.load_lzma">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">load_lzma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.load_lzma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.load_npz">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">load_npz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#load_npz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.load_npz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tidypath.storage.parent_dir">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">parent_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data'</span></em><a class="headerlink" href="#tidypath.storage.parent_dir" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="upperroman simple">
+<li><p>Save</p></li>
+</ol>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_bz2">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_bz2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.save_bz2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can specify directory in filename or in parent_dir.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_csv">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">df_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#save_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.save_csv" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>If data is a numpy array =&gt; if 2D =&gt; data</dt><dd><p>1D =&gt; [data]</p>
+</dd>
+</dl>
+<p>(required by np.savetxt)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_json">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.save_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can specify directory in filename or in parent_dir.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_lzma">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_lzma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tidypath.storage.save_lzma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can specify directory in filename or in parent_dir.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_npz">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_npz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'arr'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#save_npz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.save_npz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.storage.save_preprocess">
+<span class="sig-prename descclassname"><span class="pre">tidypath.storage.</span></span><span class="sig-name descname"><span class="pre">save_preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saving_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/storage.html#save_preprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.storage.save_preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates parent dir if does not exist and ensures filename has the saving_type extension.</p>
+</dd></dl>
+
+</section>
+<section id="module-tidypath">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tidypath" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.delete_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.</span></span><span class="sig-name descname"><span class="pre">delete_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#delete_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.delete_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete encoded function arg from filename.
+Useful when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Deleting an arg from a function wrapped by savedata. Allows loading the available data without recomputing.</p></li>
+<li><p>Modifying figure names produced by a function.</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>arg (str or iterable):       key of an arg (k in k=v) to be deleted, or an iterable containing keys.</p></li>
+<li><p>func (callable):             function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):             directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):          whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):            whether to overwrite files when in conflict.</dt><dd><p>Examples:   Delete an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.modify_arg">
+<span class="sig-prename descclassname"><span class="pre">tidypath.</span></span><span class="sig-name descname"><span class="pre">modify_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/paths.html#modify_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.modify_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified encoded function arg from filename.
+Useful when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Renaming an arg value with a more suitable one (more comprehensible, better defined…), leaving the func output unchanged. Allows loading the available data without recomputing.</p></li>
+<li><p>Modifying figure names produced by a function.</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>args (kwargs):       arguments to modify in the filename.</p></li>
+<li><p>func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</p></li>
+<li><p>directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</p></li>
+<li><p>check_first (bool):  whether to check the new filenames before applying any changes.</p></li>
+<li><dl class="simple">
+<dt>overwrite (bool):    whether to overwrite files when in conflict.</dt><dd><p>Examples:   Modify an arg -&gt; two filenames are the same -&gt; one remains.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.savedata">
+<span class="sig-prename descclassname"><span class="pre">tidypath.</span></span><span class="sig-name descname"><span class="pre">savedata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_or_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lzma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwargs_full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcname_in_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_opts_default_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">save_opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/decorators.html#savedata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.savedata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for automatically saving output and then loading cached data.
+Default behavior:</p>
+<blockquote>
+<div><p>1st function call:   stores the data with extension ‘ext’.
+rest:                loads stored data if the key args passed to the function coincide.</p>
+</div></blockquote>
+<dl>
+<dt>NOTE (!) decorated funcs will have extra arguments:</dt><dd><ul>
+<li><p>save (bool).                 whether to save the output of the function.</p></li>
+<li><p>overwrite (bool).            whether to overwrite the saved version.</p></li>
+<li><p>funcname_in_filename(bool)   whether to include funcname in the filename.</p></li>
+<li><dl>
+<dt>keys (dict/str/iterable)   · dict:     specifies filename of the form <a href="#id35"><span class="problematic" id="id36">k1-v1_k2-v2_</span></a>…kn_vn. </dt><dd><blockquote>
+<div><p>k_i do not have to be arguments of the function.</p>
+</div></blockquote>
+<dl>
+<dt>· str:       key of a keyword argument. Example: keys = ‘x’.</dt><dd><p>“kwargs_defaults”  =&gt;  default kwargs that were not modified.
+“kwargs”           =&gt;  kwargs passed during function call.
+“kwargs_full”      =&gt;  kws_defaults + kws.
+“pos_only”         =&gt;  length of <a href="#id19"><span class="problematic" id="id20">*</span></a>args
+“args”             =&gt;  attrs != <a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs, <a href="#id23"><span class="problematic" id="id24">*</span></a>args.
+“all”              if config.KEYS_ADD_POSONLY_TO_ALL  =&gt;  all attrs</p>
+<blockquote>
+<div><p>else                               =&gt;  all attrs except pos_only: kwargs_full + args</p>
+</div></blockquote>
+<p>can combine options using “+” or “-”. Example: “args+z”, “x+y+kwargs”, “all-y”.</p>
+</dd>
+</dl>
+<p>· iterable: containing a combination of the available string keys (above). [“k1”, “k2”] == “k1+k2”.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>function:                function to which the decorator is applied</p></li>
+<li><dl class="simple">
+<dt>ext:                     storing extension. Selects ‘storage’ functions save_ext, load_ext.</dt><dd><p>Supported: ‘lzma’ (default), ‘bz2’, ‘json’, ‘csv’, ‘npz’.</p>
+</dd>
+</dl>
+</li>
+<li><p>include_classes:         include class tree in saving_path.</p></li>
+<li><p>load_opts:               kws for storage.load_ext. default kws are those of ‘saving_options’, those specified update saving_options dict.</p></li>
+<li><p>save_opts:               kws for storage.save_ext</p></li>
+<li><p>load_opts_default_save:  use save_opts as default for load_opts.</p></li>
+<li><p>rest:                    default behavior for decorated funcs extra arguments (above).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: Function decorator</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tidypath.savefig">
+<span class="sig-prename descclassname"><span class="pre">tidypath.</span></span><span class="sig-name descname"><span class="pre">savefig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_or_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwargs_full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcname_in_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">save_opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tidypath/decorators.html#savefig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tidypath.savefig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates figsaver decorator.
+Figure returned by function is automatically saved. Compatible with matplotlib and plotly.</p>
+<dl>
+<dt>NOTE (!) decorated funcs will have extra arguments:</dt><dd><ul>
+<li><p>return_fig (bool)            whether to return the figure (output of function).</p></li>
+<li><p>save (bool).                 whether to save the figure.</p></li>
+<li><p>overwrite (bool).            whether to overwrite the saved version.</p></li>
+<li><p>funcname_in_filename(bool)   whether to include funcname in the filename.</p></li>
+<li><dl>
+<dt>keys (dict/str/iterable)   · dict:     specifies filename of the form <a href="#id37"><span class="problematic" id="id38">k1-v1_k2-v2_</span></a>…kn_vn. </dt><dd><blockquote>
+<div><p>k_i do not have to be arguments of the function.</p>
+</div></blockquote>
+<dl>
+<dt>· str:       key of a keyword argument. Example: keys = ‘x’.</dt><dd><p>“kwargs_defaults”  =&gt;  default kwargs that were not modified.
+“kwargs”           =&gt;  kwargs passed during function call.
+“kwargs_full”      =&gt;  kws_defaults + kws.
+“pos_only”         =&gt;  length of <a href="#id25"><span class="problematic" id="id26">*</span></a>args. Also self and cls are counted as pos_only arguments.
+“args”             =&gt;  attrs != <a href="#id27"><span class="problematic" id="id28">**</span></a>kwargs, <a href="#id29"><span class="problematic" id="id30">*</span></a>args.
+“all”              if config.KEYS_ADD_POSONLY_TO_ALL  =&gt;  all attrs</p>
+<blockquote>
+<div><p>else                               =&gt;  all attrs except pos_only: kwargs_full + args</p>
+</div></blockquote>
+<p>can combine options using “+” or “-”. Example: “args+z”, “x+y+kwargs”, “all-y”.</p>
+</dd>
+</dl>
+<p>· iterable: containing a combination of the available string keys (above). [“k1”, “k2”] == “k1+k2”.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Attrs:</dt><dd><ul class="simple">
+<li><p>function:                function to which the decorator is applied</p></li>
+<li><dl class="simple">
+<dt>ext:                     storing extension. ‘eps’ recommended for articles.</dt><dd><p>Supported: any extension supported by matplotlib/plotly. Example: ‘png’, ‘eps’, ‘html’ (plotly), etc.</p>
+</dd>
+</dl>
+</li>
+<li><p>include_classes:         include class tree in saving_path.</p></li>
+<li><p>save_opts:               kws for saving function.</p></li>
+<li><p>rest:                    default behavior for decorated funcs extra arguments (above).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: Function decorator</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="tidypath" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Jorge Medina
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

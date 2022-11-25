@@ -1,0 +1,7 @@
+tidypath
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   tidypath
