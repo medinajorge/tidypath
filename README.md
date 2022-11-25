@@ -55,5 +55,8 @@ Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is
 - [Defining functions](https://github.com/medinajorge/tidypath/blob/master/tests/analysis/variable1/measurement1.py)
 - [Calling functions & modifying args](https://github.com/medinajorge/tidypath/blob/master/tests/Example.ipynb)
 
+## Docs
+[Github pages](https://medinajorge.github.io/tidypath/)
+
 ## Install
     pip install tidypath
