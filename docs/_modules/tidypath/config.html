@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tidypath.config &mdash; Tidypath 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tidypath
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">tidypath</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tidypath</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tidypath.config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tidypath.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Config specs for the decorators &#39;savedata&#39;, &#39;savefig&#39;.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># YAML needed to use file based Numba config</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">yaml</span>
+    <span class="n">_HAVE_YAML</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_HAVE_YAML</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># this is the name of the user supplied configuration file</span>
+<span class="n">_config_fname</span> <span class="o">=</span> <span class="s1">&#39;.tidypath_config.yaml&#39;</span>    
+    
+<span class="k">class</span> <span class="nc">_EnvReloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_environ</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">new_environ</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># first check if there&#39;s a .phdu_config.yaml and use values from that</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">_config_fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">_config_fname</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_HAVE_YAML</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;A tidypath config file is found but YAML parsing &quot;</span>
+                       <span class="s2">&quot;capabilities appear to be missing. &quot;</span>
+                       <span class="s2">&quot;To use this feature please install `pyyaml`. e.g. &quot;</span>
+                       <span class="s2">&quot;`conda install pyyaml`.&quot;</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_config_fname</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">y_conf</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">y_conf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_conf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">new_environ</span><span class="p">[</span><span class="s1">&#39;TIDYPATH_&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c1"># clobber file based config with any locally defined env vars</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TIDYPATH_&#39;</span><span class="p">):</span>
+                <span class="n">new_environ</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># We update the config variables if at least one PDHU environment</span>
+        <span class="c1"># variable was modified.  This lets the user modify values</span>
+        <span class="c1"># directly in the config module without having them when</span>
+        <span class="c1"># reload_config() is called by the compiler.</span>
+        <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_environ</span> <span class="o">!=</span> <span class="n">new_environ</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_environ</span><span class="p">(</span><span class="n">new_environ</span><span class="p">)</span>
+            <span class="c1"># Store a copy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_environ</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">new_environ</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_environ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_readenv</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ctor</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Attrs:</span>
+<span class="sd">                    - name:    name of the environment variable</span>
+<span class="sd">                    - ctor:    constructor for the value of the env var. Takes a value v1 of type t1 and returns a value v2 of type t2.</span>
+<span class="sd">                    - default: default value for the env var.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">default</span><span class="p">()</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">default</span><span class="p">)</span> <span class="k">else</span> <span class="n">default</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ctor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;environ </span><span class="si">%s</span><span class="s2"> defined but failed to parse &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span>
+                              <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">default</span>
+
+        <span class="k">def</span> <span class="nf">optional_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Examples:</span>
+<span class="sd">                        ENV_VAR = _readenv(TIDYPATH_ENV_VAR, optional_str, None)</span>
+<span class="sd">                        ENV_VAR = _readenv(TIDYPATH_ENV_VAR, optional_str,</span>
+<span class="sd">                                           (val if condition </span>
+<span class="sd">                                            else None))</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        
+        <span class="k">def</span> <span class="nf">to_bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x:str must be one of [&#39;true&#39;, &#39;false&#39;, yes&#39;, no&#39;] and the corresponding 1 character equivalents. Received </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x:int must be 0 or 1. Received </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;x must be of type &#39;str&#39; or &#39;int&#39;. Received </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        
+        <span class="n">KEYS_DEFAULT</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_KEYS_DEFAULT&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;kwargs_full&quot;</span><span class="p">)</span>
+        <span class="n">KEYS_DEFAULT_DATA</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_KEYS_DEFAULT_DATA&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">KEYS_DEFAULT</span><span class="p">)</span>
+        <span class="n">KEYS_DEFAULT_FIG</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_KEYS_DEFAULT_FIG&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">KEYS_DEFAULT</span><span class="p">)</span>
+        <span class="n">KEYS_ADD_POSONLY_TO_ALL</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_KEYS_ADD_POSONLY_TO_ALL&quot;</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        
+        <span class="n">EXT_DEFAULT_DATA</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_EXT_DEFAULT_DATA&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;lzma&quot;</span><span class="p">)</span>
+        <span class="n">EXT_DEFAULT_FIG</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_EXT_DEFAULT_FIG&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">)</span>
+        
+        <span class="n">FUNCNAME_IN_FILENAME_DEFAULT_DATA</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_DATA&quot;</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">FUNCNAME_IN_FILENAME_DEFAULT_FIG</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_FIG&quot;</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        
+        <span class="n">RETURN_FIG_DEFAULT</span> <span class="o">=</span> <span class="n">_readenv</span><span class="p">(</span><span class="s2">&quot;TIDYPATH_RETURN_FIG_DEFAULT&quot;</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        
+        <span class="c1"># Inject the configuration values into the module globals</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+<span class="n">_env_reloader</span> <span class="o">=</span> <span class="n">_EnvReloader</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="reload_config"><a class="viewcode-back" href="../../tidypath.html#tidypath.config.reload_config">[docs]</a><span class="k">def</span> <span class="nf">reload_config</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reload the configuration from environment variables, if necessary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_env_reloader</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Jorge Medina
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

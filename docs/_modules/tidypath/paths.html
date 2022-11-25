@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tidypath.paths &mdash; Tidypath 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tidypath
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">tidypath</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tidypath</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tidypath.paths</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tidypath.paths</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Creates paths for automatically organizing files. </span>
+<span class="sd">Allows filename modification: If arg added (deleted) to func =&gt; add (delete) arg to stored function output files.</span>
+
+<span class="sd">Two schemes:</span>
+<span class="sd">    1. By module =&gt; Module -&gt; submodules -&gt; class tree (until classes in module by default) -&gt; func</span>
+<span class="sd">    2. By class  =&gt; Class organization is a class to be inherited. Sets path: parentDir -&gt; subfolder (optionally specified) -&gt; inheritance_tree -&gt; func_name.</span>
+<span class="sd">(1) is the most appropiate.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">.fmt</span> <span class="kn">import</span> <span class="n">dict_to_id</span><span class="p">,</span> <span class="n">encoder</span>
+<span class="kn">from</span> <span class="nn">.inspection</span> <span class="kn">import</span> <span class="n">get_class_that_defined_method</span>
+
+<span class="n">dataDir</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">figDir</span> <span class="o">=</span> <span class="s2">&quot;figs&quot;</span>
+
+<div class="viewcode-block" id="module_path"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.module_path">[docs]</a><span class="k">def</span> <span class="nf">module_path</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">include_classes</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    returns module path and func_name.</span>
+<span class="sd">    </span>
+<span class="sd">    include_classes:   &#39;file&#39;: path: module -&gt; class tree contained in func file -&gt; func_name.</span>
+<span class="sd">                       &#39;all&#39;: path: module -&gt; full class tree -&gt; func_name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="p">[</span><span class="s2">&quot;__name__&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span>
+    <span class="k">if</span> <span class="n">include_classes</span><span class="p">:</span>
+        <span class="n">func_class</span> <span class="o">=</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">func_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">include_classes</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+                <span class="n">clsmembers</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">)</span>
+                <span class="n">cls_names</span><span class="p">,</span> <span class="n">clss</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">clsmembers</span><span class="p">)</span>
+                <span class="n">class_tree</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">func_class</span><span class="o">.</span><span class="n">mro</span><span class="p">()[:</span><span class="o">-</span><span class="n">skip</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clss</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">include_classes</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+                <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">mro</span><span class="p">()[:</span><span class="o">-</span><span class="n">skip</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;include_classes: </span><span class="si">{</span><span class="n">include_classes</span><span class="si">}</span><span class="s2"> not valid. Available: &#39;file&#39;, &#39;all&#39;, &#39;&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">class_tree</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">class_tree</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">class_tree</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+<div class="viewcode-block" id="saving_path"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.saving_path">[docs]</a><span class="k">def</span> <span class="nf">saving_path</span><span class="p">(</span><span class="n">Dir</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">{},</span> <span class="n">subfolder</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">return_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">funcname_in_filename</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tree path: subfolder -&gt; module -&gt; (classes) -&gt; func_name.&quot;&quot;&quot;</span>
+    <span class="n">parentDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Dir</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">module_path</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">parentDir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   
+    <span class="k">if</span> <span class="n">return_dir</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parentDir</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">funcname_in_filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">parentDir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">dict_to_id</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span><span class="si">}</span><span class="s2">_.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dict_to_id</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span><span class="si">}</span><span class="s2">_.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parentDir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="figpath"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.figpath">[docs]</a><span class="k">def</span> <span class="nf">figpath</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">saving_path</span><span class="p">(</span><span class="n">figDir</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="datapath"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.datapath">[docs]</a><span class="k">def</span> <span class="nf">datapath</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s2">&quot;lzma&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">saving_path</span><span class="p">(</span><span class="n">dataDir</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="filename_modifier"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.filename_modifier">[docs]</a><span class="k">def</span> <span class="nf">filename_modifier</span><span class="p">(</span><span class="n">process_filename</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base function for adding/deleting/modifying function args encoded in the output filenames.</span>
+<span class="sd">    </span>
+<span class="sd">    Attrs:</span>
+<span class="sd">        - process_filename:    function f(file, k_name, k, v) -&gt; new_filename. </span>
+<span class="sd">                               - k, v are the key and value of an arg.</span>
+<span class="sd">                               - k_name is the string encoding of k. (replace &#39;_&#39; -&gt; &#39;-&#39;)</span>
+<span class="sd">        - func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</span>
+<span class="sd">        - directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</span>
+<span class="sd">        - check_first (bool):  whether to check the new filenames before applying any changes.   </span>
+<span class="sd">        - overwrite (bool):    whether to overwrite files when in conflict.</span>
+<span class="sd">                               Examples:   add/modify/delete an arg -&gt; two filenames are the same -&gt; one remains.</span>
+<span class="sd">        - args (kwargs):       Arguments to add/delete/modify in the filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Please provide &#39;func&#39; or &#39;directory&#39; but not both.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="n">__out__</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
+                <span class="n">directory</span> <span class="o">=</span> <span class="n">datapath</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">return_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">directory</span> <span class="o">=</span> <span class="n">figpath</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">return_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Provide &#39;func&#39; (preferred) or &#39;directory&#39;.&quot;</span><span class="p">)</span>
+        
+    <span class="n">args_sorted</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">args</span><span class="p">)}</span>
+    <span class="n">abort_changes</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">avoid_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.ipynb_checkpoints&quot;</span><span class="p">,</span> <span class="s2">&quot;__pycache__&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args_sorted</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">check_first_k</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">check_first</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">abort_changes</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k_name</span> <span class="o">=</span> <span class="n">encoder</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">avoid_files</span><span class="p">:</span>
+                    <span class="n">new_filename</span> <span class="o">=</span> <span class="n">process_filename</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">k_name</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">new_filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="s2">&#39; already existing before modifying &#39;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&#39;. To delete repeated files pass &#39;overwrite=True&#39;.&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">check_first_k</span><span class="p">:</span>
+                                <span class="n">update_file</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">while</span> <span class="n">update_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">]:</span>
+                                    <span class="n">update_file</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Filename change example:</span><span class="se">\n\n</span><span class="s2">&#39;</span><span class="si">{}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{}</span><span class="s2">&#39;</span><span class="se">\n\n</span><span class="s2">Proceed? [y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                                <span class="n">check_first_k</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">if</span> <span class="n">update_file</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">]:</span>                    
+                                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> 
+                                          <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">))</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Aborted filename changes.&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+                                <span class="n">abort_changes</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="k">break</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="add_arg"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.add_arg">[docs]</a><span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encodes new function args into filename.</span>
+<span class="sd">    Useful when:</span>
+<span class="sd">        (1) Adding a new arg to a function wrapped by savedata. Allows loading the available data without recomputing.</span>
+<span class="sd">        (2) Modifying figure names produced by a function.</span>
+<span class="sd">    </span>
+<span class="sd">    Attrs:</span>
+<span class="sd">        - args (kwargs):       new arguments to encode into filename.</span>
+<span class="sd">        - func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</span>
+<span class="sd">        - directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</span>
+<span class="sd">        - check_first (bool):  whether to check the new filenames before applying any changes.</span>
+<span class="sd">        - overwrite (bool):    whether to overwrite files when in conflict.</span>
+<span class="sd">                               Example:   add an arg -&gt; two filenames are the same -&gt; one remains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">process_filename</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">k_name</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="n">arg_val</span> <span class="o">=</span> <span class="n">dict_to_id</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">arg_val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">args_in_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">pos_new_arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">args_in_file</span> <span class="o">==</span> <span class="n">k</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pos_new_arg</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_val</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pos_new_arg</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">args_in_file</span><span class="p">):</span>
+                    <span class="n">insert_before</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">insert_before</span> <span class="o">=</span> <span class="n">args_in_file</span><span class="p">[</span><span class="n">pos_new_arg</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">new_filename</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">insert_before</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">arg_val</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">insert_before</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">filename_modifier</span><span class="p">(</span><span class="n">process_filename</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="n">check_first</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="delete_arg"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.delete_arg">[docs]</a><span class="k">def</span> <span class="nf">delete_arg</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete encoded function arg from filename.</span>
+<span class="sd">    Useful when:</span>
+<span class="sd">        (1) Deleting an arg from a function wrapped by savedata. Allows loading the available data without recomputing.</span>
+<span class="sd">        (2) Modifying figure names produced by a function.</span>
+<span class="sd">    </span>
+<span class="sd">    Attrs:</span>
+<span class="sd">        - arg (str or iterable):       key of an arg (k in k=v) to be deleted, or an iterable containing keys.</span>
+<span class="sd">        - func (callable):             function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</span>
+<span class="sd">        - directory (str):             directory where files are to be modified. It is recommended to pass the function instead of the directory.</span>
+<span class="sd">        - check_first (bool):          whether to check the new filenames before applying any changes.</span>
+<span class="sd">        - overwrite (bool):            whether to overwrite files when in conflict.</span>
+<span class="sd">                                       Examples:   Delete an arg -&gt; two filenames are the same -&gt; one remains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">arg</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">):</span>
+            <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;arg </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2"> not valid. Must be a string or an iterable of strings.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;arg </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2"> not valid. Must be a string or an iterable of strings.&quot;</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">process_filename</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">k_name</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k_name</span><span class="si">}</span><span class="s2">-&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mid_file_k_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k_name</span><span class="si">}</span><span class="s2">-&quot;</span>
+            <span class="k">if</span> <span class="n">mid_file_k_name</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">arg_val_encoded</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mid_file_k_name</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">mid_file_k_name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">arg_val_encoded</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">filename_modifier</span><span class="p">(</span><span class="n">process_filename</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="n">check_first</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_dict</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="modify_arg"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.modify_arg">[docs]</a><span class="k">def</span> <span class="nf">modify_arg</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modified encoded function arg from filename.</span>
+<span class="sd">    Useful when:</span>
+<span class="sd">        (1) Renaming an arg value with a more suitable one (more comprehensible, better defined...), leaving the func output unchanged. Allows loading the available data without recomputing.</span>
+<span class="sd">        (2) Modifying figure names produced by a function.</span>
+<span class="sd">    </span>
+<span class="sd">    Attrs:</span>
+<span class="sd">        - args (kwargs):       arguments to modify in the filename.</span>
+<span class="sd">        - func (callable):     function (wrapped by savedata or savefig) for retrieving the corresponding directory where the outputs are stored.</span>
+<span class="sd">        - directory (str):     directory where files are to be modified. It is recommended to pass the function instead of the directory.</span>
+<span class="sd">        - check_first (bool):  whether to check the new filenames before applying any changes.</span>
+<span class="sd">        - overwrite (bool):    whether to overwrite files when in conflict.</span>
+<span class="sd">                               Examples:   Modify an arg -&gt; two filenames are the same -&gt; one remains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">process_filename</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">k_name</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k_name</span><span class="si">}</span><span class="s2">-&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">dict_to_id</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span><span class="p">})]</span> <span class="o">+</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mid_file_k_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k_name</span><span class="si">}</span><span class="s2">-&quot;</span>
+            <span class="k">if</span> <span class="n">mid_file_k_name</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">arg_val_encoded</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mid_file_k_name</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">mid_file_k_name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">arg_val_encoded</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dict_to_id</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span><span class="p">})))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">filename_modifier</span><span class="p">(</span><span class="n">process_filename</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">check_first</span><span class="o">=</span><span class="n">check_first</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="Organizer"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.Organizer">[docs]</a><span class="k">class</span> <span class="nc">Organizer</span><span class="p">():</span>
+    <span class="n">dataDir</span> <span class="o">=</span> <span class="n">dataDir</span>
+    <span class="n">figDir</span> <span class="o">=</span> <span class="n">figDir</span>
+    <span class="n">subfolder</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div>
+    
+<div class="viewcode-block" id="ClassPath"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.ClassPath">[docs]</a><span class="k">class</span> <span class="nc">ClassPath</span><span class="p">(</span><span class="n">Organizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates fig and data dir of the class as follows:</span>
+<span class="sd">    parentDir -&gt; subfolder -&gt; inheritance_tree -&gt; func_name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="ClassPath.inheritance_path"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.ClassPath.inheritance_path">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">inheritance_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mro</span><span class="p">()[:</span><span class="o">-</span><span class="n">skip</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span></div>
+    
+<div class="viewcode-block" id="ClassPath.create_dir"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.ClassPath.create_dir">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dirKey</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates tree: parentDir -&gt; subfolder -&gt; inheritance_tree -&gt; func_name&quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirKey</span><span class="si">}</span><span class="s2">Dir&quot;</span><span class="p">),</span>
+                            <span class="bp">cls</span><span class="o">.</span><span class="n">subfolder</span><span class="p">,</span>
+                            <span class="bp">cls</span><span class="o">.</span><span class="n">inheritance_path</span><span class="p">(),</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+                           <span class="p">)</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+        
+<div class="viewcode-block" id="ClassPath.create_figDir"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.ClassPath.create_figDir">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_figDir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="s2">&quot;fig&quot;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ClassPath.create_dataDir"><a class="viewcode-back" href="../../tidypath.html#tidypath.paths.ClassPath.create_dataDir">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_dataDir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span></div></div>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Jorge Medina
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

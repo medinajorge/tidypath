@@ -1,0 +1,61 @@
+tidypath package
+================
+
+Submodules
+----------
+
+tidypath.config module
+----------------------
+
+.. automodule:: tidypath.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tidypath.decorators module
+--------------------------
+
+.. automodule:: tidypath.decorators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tidypath.fmt module
+-------------------
+
+.. automodule:: tidypath.fmt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tidypath.inspection module
+--------------------------
+
+.. automodule:: tidypath.inspection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tidypath.paths module
+---------------------
+
+.. automodule:: tidypath.paths
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tidypath.storage module
+-----------------------
+
+.. automodule:: tidypath.storage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: tidypath
+   :members:
+   :undoc-members:
+   :show-inheritance:

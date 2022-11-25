@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tidypath.storage &mdash; Tidypath 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tidypath
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">tidypath</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tidypath</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tidypath.storage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tidypath.storage</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Handle data (store/move/delete/load...)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+<span class="kn">import</span> <span class="nn">lzma</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+
+<span class="n">parent_dir</span> <span class="o">=</span>  <span class="s1">&#39;data&#39;</span>
+
+
+<span class="c1">##############################################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;                                                       I. Save                                                          &quot;&quot;&quot;</span>
+<span class="c1">##############################################################################################################################</span>
+
+<div class="viewcode-block" id="NpEncoder"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.NpEncoder">[docs]</a><span class="k">class</span> <span class="nc">NpEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+<div class="viewcode-block" id="NpEncoder.default"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.NpEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">NpEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="save_preprocess"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.save_preprocess">[docs]</a><span class="k">def</span> <span class="nf">save_preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">saving_type</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates parent dir if does not exist and ensures filename has the saving_type extension.&quot;&quot;&quot;</span>
+    <span class="n">_parent_dir</span><span class="p">,</span> <span class="n">_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_parent_dir</span><span class="p">:</span>  <span class="c1"># directory specified in filename</span>
+        <span class="n">parent_dir</span> <span class="o">=</span> <span class="n">_parent_dir</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">_filename</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">saving_type</span><span class="p">))</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">saving_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parent_dir</span><span class="p">,</span> <span class="n">filename</span></div>
+        
+<div class="viewcode-block" id="create_saving_func"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.create_saving_func">[docs]</a><span class="k">def</span> <span class="nf">create_saving_func</span><span class="p">(</span><span class="n">file_opener</span><span class="p">,</span> <span class="n">file_writer</span><span class="p">,</span> <span class="n">saving_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">saving_func</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="n">parent_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Can specify directory in filename or in parent_dir.&quot;&quot;&quot;</span>
+        <span class="n">parent_dir</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">save_preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">saving_type</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">file_opener</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_writer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">return</span> <span class="n">saving_func</span></div>
+
+<span class="n">save_json</span> <span class="o">=</span> <span class="n">create_saving_func</span><span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NpEncoder</span><span class="p">)</span>
+<span class="n">save_bz2</span> <span class="o">=</span> <span class="n">create_saving_func</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">,</span> <span class="s1">&#39;pbz2&#39;</span><span class="p">)</span>
+<span class="n">save_lzma</span> <span class="o">=</span> <span class="n">create_saving_func</span><span class="p">(</span><span class="n">lzma</span><span class="o">.</span><span class="n">LZMAFile</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">,</span> <span class="s1">&#39;lzma&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="save_npz"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.save_npz">[docs]</a><span class="k">def</span> <span class="nf">save_npz</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;arr&quot;</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">arr</span><span class="p">})</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="save_csv"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.save_csv">[docs]</a><span class="k">def</span> <span class="nf">save_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="n">parent_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">df_kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If data is a numpy array =&gt; if 2D =&gt; data</span>
+<span class="sd">                                   1D =&gt; [data]</span>
+<span class="sd">    (required by np.savetxt)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parent_dir</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">save_preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="c1">##############################################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;                                                       II. Load                                                         &quot;&quot;&quot;</span>
+<span class="c1">##############################################################################################################################</span>
+
+<div class="viewcode-block" id="create_loading_func"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.create_loading_func">[docs]</a><span class="k">def</span> <span class="nf">create_loading_func</span><span class="p">(</span><span class="n">file_opener</span><span class="p">,</span> <span class="n">file_loader</span><span class="p">,</span> <span class="n">extra_processing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    - extra_processing = List of process that could be applied to the file.</span>
+<span class="sd">    - apply_defaults = dict:{str: bool}. The key is set as a function variable, the value indicates whether to apply the process named by the key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">extra_processing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">loading_func</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">file_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">file_loader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>        
+        <span class="k">def</span> <span class="nf">loading_func</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span>  <span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">create_loading_func</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">)}</span>
+            <span class="k">with</span> <span class="n">file_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">file_loader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">process</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">extra_processing</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">condition</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+        
+        <span class="c1"># I know this sould not be done this way, but I wanted to check it can</span>
+        <span class="n">code_data</span> <span class="o">=</span> <span class="n">loading_func</span><span class="o">.</span><span class="vm">__code__</span>
+        <span class="n">num_vars</span> <span class="o">=</span> <span class="n">code_data</span><span class="o">.</span><span class="n">co_argcount</span>
+        <span class="n">num_vars_new</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">apply_defaults</span><span class="p">)</span>
+        <span class="n">new_code</span> <span class="o">=</span> <span class="n">code_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">co_varnames</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">code_data</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[:</span><span class="n">num_vars</span><span class="p">],</span> <span class="o">*</span><span class="n">apply_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="o">*</span><span class="n">code_data</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[</span><span class="n">num_vars</span><span class="p">:]),</span>
+                                     <span class="n">co_argcount</span><span class="o">=</span><span class="n">num_vars</span> <span class="o">+</span> <span class="n">num_vars_new</span><span class="p">,</span> 
+                                     <span class="n">co_nlocals</span><span class="o">=</span><span class="n">code_data</span><span class="o">.</span><span class="n">co_nlocals</span> <span class="o">+</span> <span class="n">num_vars_new</span><span class="p">)</span>
+        <span class="n">loading_func</span><span class="o">.</span><span class="vm">__code__</span> <span class="o">=</span> <span class="n">new_code</span>
+        <span class="n">loading_func</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">apply_defaults</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">loading_func</span></div>
+
+<div class="viewcode-block" id="int_keys"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.int_keys">[docs]</a><span class="k">def</span> <span class="nf">int_keys</span><span class="p">(</span><span class="n">dictionary</span><span class="p">):</span>
+     <span class="k">return</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">):</span><span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<span class="n">load_json</span> <span class="o">=</span> <span class="n">create_loading_func</span><span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">,</span> <span class="n">extra_processing</span><span class="o">=</span><span class="p">[</span><span class="n">int_keys</span><span class="p">],</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;int_keys&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">})</span>
+<span class="n">load_bz2</span> <span class="o">=</span> <span class="n">create_loading_func</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>
+<span class="n">load_lzma</span> <span class="o">=</span> <span class="n">create_loading_func</span><span class="p">(</span><span class="n">lzma</span><span class="o">.</span><span class="n">LZMAFile</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>
+
+<div class="viewcode-block" id="load_npz"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.load_npz">[docs]</a><span class="k">def</span> <span class="nf">load_npz</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">key</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="load_csv"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.load_csv">[docs]</a><span class="k">def</span> <span class="nf">load_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2"> not valid. Available: &#39;panda&#39;, &#39;numpy&#39;.&quot;</span><span class="p">)</span></div>
+        
+
+<span class="c1">##############################################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;                                                   III. Compression                                                     &quot;&quot;&quot;</span>
+<span class="c1">##############################################################################################################################</span>
+
+<div class="viewcode-block" id="compress_files"><a class="viewcode-back" href="../../tidypath.html#tidypath.storage.compress_files">[docs]</a><span class="k">def</span> <span class="nf">compress_files</span><span class="p">(</span><span class="n">rootDir</span><span class="o">=</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">compress_to</span><span class="o">=</span><span class="s1">&#39;lzma&#39;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">loading_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches in a directory and all its subdirectories files with a certain extension and compresses them.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">    - rootDir: The root directory.</span>
+<span class="sd">    - extension: Extension setting which files should be compressed. Available options: &#39;.json&#39;, &#39;.npz&#39;.</span>
+<span class="sd">    - compress_to: File type after compression. Available options: &#39;lzma&#39;, &#39;bz2&#39; (or pbz2).</span>
+<span class="sd">    - min_size: Minimum size for applying compression (in MB).</span>
+<span class="sd">    - loading_key: Key for retrieving the data in a npz file. If None, retrieves the data corresponding to the first key.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns: Dict containing the name of the files that could not be processed (&#39;bad compression&#39;) or those that were corrupted and had to be deleted(&#39;deleted files&#39;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">shell</span> <span class="o">==</span> <span class="s1">&#39;ZMQInteractiveShell&#39;</span><span class="p">:</span> <span class="c1"># script being run in Jupyter notebook</span>
+            <span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+        <span class="k">elif</span> <span class="n">shell</span> <span class="o">==</span> <span class="s1">&#39;TerminalInteractiveShell&#39;</span><span class="p">:</span> <span class="c1">#script being run in iPython terminal</span>
+            <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span> <span class="c1"># Probably runing on standard python terminal.</span>
+            
+    <span class="c1"># Get all the paths with the desired extension and minimum size.</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">subdirList</span><span class="p">,</span> <span class="n">fileList</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">rootDir</span><span class="p">):</span>
+        <span class="n">files</span> <span class="o">+=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">fileList</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">extension</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">min_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_size</span><span class="o">*</span><span class="mf">1e6</span><span class="p">]</span>
+    
+    <span class="c1"># Load files, compress, save and delete if compressed_file == pre_compressed_file</span>
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">load_json</span>
+    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.npz&#39;</span><span class="p">:</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">load_npz</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;extension = &#39;</span><span class="si">{}</span><span class="s2">&#39; not valid. Available options: &#39;.json&#39;, &#39;.npz&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+        
+    <span class="k">if</span> <span class="n">compress_to</span> <span class="o">==</span> <span class="s1">&#39;lzma&#39;</span><span class="p">:</span>
+        <span class="n">compressor</span> <span class="o">=</span> <span class="n">save_lzma</span>
+        <span class="n">load_compressor</span> <span class="o">=</span> <span class="n">load_lzma</span>
+    <span class="k">elif</span> <span class="n">compress_to</span> <span class="o">==</span> <span class="s1">&#39;bz2&#39;</span><span class="p">:</span>
+        <span class="n">compressor</span> <span class="o">=</span> <span class="n">save_bz2</span>
+        <span class="n">load_compressor</span> <span class="o">=</span> <span class="n">load_bz2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;compress_to = &#39;</span><span class="si">{}</span><span class="s2">&#39; not valid. Available options: &#39;lzma&#39;, &#39;bz2&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+    
+    <span class="n">not_correctly_processed</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bad_compression&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)))</span>
+    
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pre_compressed</span> <span class="o">=</span> <span class="n">loader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">int_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">pre_compressed</span> <span class="o">=</span> <span class="n">loader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">int_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            
+            <span class="n">new_filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">compress_to</span><span class="p">)</span>
+            <span class="n">compressor</span><span class="p">(</span><span class="n">pre_compressed</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">compressed_file</span> <span class="o">=</span> <span class="n">load_compressor</span><span class="p">(</span><span class="n">new_filename</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">compressed_file</span> <span class="o">==</span> <span class="n">pre_compressed</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">not_correctly_processed</span><span class="p">[</span><span class="s1">&#39;bad_compression&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            
+            <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">())</span>
+            
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.npz&#39;</span><span class="p">:</span>
+        <span class="n">not_correctly_processed</span><span class="p">[</span><span class="s1">&#39;deleted_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pre_compressed</span> <span class="o">=</span> <span class="n">loader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">loading_key</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span> <span class="c1"># corrupted file</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="n">not_correctly_processed</span><span class="p">[</span><span class="s1">&#39;deleted_files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="k">continue</span>
+                
+            <span class="n">new_filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">compress_to</span><span class="p">)</span>
+            <span class="n">compressor</span><span class="p">(</span><span class="n">pre_compressed</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">compressed_file</span> <span class="o">=</span> <span class="n">load_compressor</span><span class="p">(</span><span class="n">new_filename</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">compressed_file</span> <span class="o">==</span> <span class="n">pre_compressed</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">not_correctly_processed</span><span class="p">[</span><span class="s1">&#39;bad_compression&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">())</span>
+    
+    <span class="k">return</span> <span class="n">not_correctly_processed</span></div>
+        
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Jorge Medina
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
