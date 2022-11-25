@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
     name='tidypath',
-    version='1.0.5',
+    version='1.0.6',
     author="Jorge Medina Hernández",
     author_email='medinahdezjorge@gmail.com',
     packages=['tidypath'],
     url='https://github.com/medinajorge/tidypath',
-    download_url='https://github.com/medinajorge/tidypath/archive/refs/tags/v1.0.2.tar.gz',
+    download_url='https://github.com/medinajorge/tidypath/archive/refs/tags/v1.0.5.tar.gz',
     description="Automatically store/load data in a tidy, efficient way.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
