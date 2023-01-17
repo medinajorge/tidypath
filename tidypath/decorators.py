@@ -2,6 +2,7 @@
 Main uses: save and cache data, save figures, change figure color, timing.
 """
 import inspect
+import warnings
 from pathlib import Path
 from functools import wraps
 from collections.abc import Iterable
@@ -81,11 +82,16 @@ def savedata(keys_or_function=None, include_classes="file",
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
             
             if Path(saving_path).exists() and not overwrite:
-                return getattr(storage, f"load_{ext}")(saving_path, **load_opts)
+                try:
+                    result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
+                except EOFError:
+                    warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                    result = func(*args, **kwargs)
+                    getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             else:
                 result = func(*args, **kwargs)
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
-                return result
+            return result
 
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename"])
         wrapper.__out__ = "data"
