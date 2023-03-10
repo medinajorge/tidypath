@@ -42,6 +42,11 @@ def decoder(x, iterables=(list, tuple, np.ndarray)):
         return True
     elif "--" in x:
         return float(x.replace("--", "."))
+    elif "." in x:
+        try:
+            return float(x)
+        except:
+            return x
     elif isinstance(x, iterables):
         return [decoder(sub_x) for sub_x in x]
     else:
