@@ -2,6 +2,7 @@
 Encode dictionaries in strings and decode them. Useful for automatically asigning filenames.
 """
 import numpy as np
+import math
 import os
 
 ##############################################################################################################################
@@ -11,7 +12,9 @@ import os
 def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=3):
     """x -> string version of x"""
     if isinstance(x, float):
-        if x == int(x):
+        if math.isinf(x) or math.isnan(x):
+            return str(x)
+        elif x == int(x):
             return str(int(x))
         else:
             return str(round(x, ndigits=ndigits)).replace('.', '--')
