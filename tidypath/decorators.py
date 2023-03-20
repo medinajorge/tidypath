@@ -155,9 +155,7 @@ def savefig(keys_or_function=None, include_classes="file",
         @wraps(func)
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
             fig = func(*args, **kwargs)
-            if fig is None or math.isnan(fig):
-                warnings.warn("Expected output figure (plotly or matplotlib) and received None or NaN.", RuntimeWarning)
-            else:
+            if isinstance(fig, (mpl_figure, plotly_figure)):
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
                 saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
@@ -178,6 +176,10 @@ def savefig(keys_or_function=None, include_classes="file",
                     return fig
                 else:
                     return
+            elif fig is None or math.isnan(fig):
+                warnings.warn("Expected output figure (plotly or matplotlib) and received None or NaN.", RuntimeWarning)
+            else:
+                warnings.warn("Expected output figure (plotly, matplotlib) or a flag for figure error computation (None, NaN), but received {}".format(type(fig)), RuntimeWarning)
             
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "return_fig"])
         wrapper.__out__ = "figure"
