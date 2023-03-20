@@ -1,6 +1,7 @@
 """
 Main uses: save and cache data, save figures, change figure color, timing.
 """
+import math
 import inspect
 import warnings
 from pathlib import Path
@@ -110,6 +111,7 @@ def savefig(keys_or_function=None, include_classes="file",
     """
     Generates figsaver decorator.
     Figure returned by function is automatically saved. Compatible with matplotlib and plotly.
+    If None or NaN is returned, avoid figure saving.
         
     NOTE (!) decorated funcs will have extra arguments:
         - return_fig (bool)            whether to return the figure (output of function).
@@ -153,26 +155,29 @@ def savefig(keys_or_function=None, include_classes="file",
         @wraps(func)
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
             fig = func(*args, **kwargs)
-            key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
-            save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
-            saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
-            
-            if not Path(saving_path).exists() or overwrite:
-                if isinstance(fig, mpl_figure):
-                    fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
-                    plt.close(fig)
-                elif isinstance(fig, plotly_figure):
-                    if ext == "html":
-                        fig.write_html(saving_path, **save_opts)
-                    else:
-                        fig.write_image(saving_path, format=ext, **save_opts)
-                else:
-                    raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'plotly.grap_objs._figure.Figure'.")
-                    
-            if return_fig:
-                return fig
+            if fig is None or math.isnan(fig):
+                warnings.warn("Expected output figure (plotly or matplotlib) and received None or NaN.", RuntimeWarning)
             else:
-                return
+                key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
+                save_keys = merge_nested_dict(key_opts, keys, key_default="all")                    
+                saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
+                
+                if not Path(saving_path).exists() or overwrite:
+                    if isinstance(fig, mpl_figure):
+                        fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
+                        plt.close(fig)
+                    elif isinstance(fig, plotly_figure):
+                        if ext == "html":
+                            fig.write_html(saving_path, **save_opts)
+                        else:
+                            fig.write_image(saving_path, format=ext, **save_opts)
+                    else:
+                        raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'plotly.grap_objs._figure.Figure'.")
+                        
+                if return_fig:
+                    return fig
+                else:
+                    return
             
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "return_fig"])
         wrapper.__out__ = "figure"
