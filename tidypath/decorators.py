@@ -21,7 +21,7 @@ else:
     import matplotlib.pyplot as plt
 
 from . import storage, config
-from .paths import datapath, figpath
+from .paths import datapath, figpath, hash_path
 from .inspection import classify_call_attrs, merge_wrapper_signatures
 from ._helper import merge_nested_dict
 
@@ -89,7 +89,7 @@ def savedata(keys_or_function=None, include_classes="file",
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
 
             if len(saving_path) > max_str_length:
-                saving_path = "{}.lzma".format(hash(os.path.splitext(saving_path)[0]))
+                saving_path = hash_path(saving_path)
                 warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
 
             if Path(saving_path).exists() and not overwrite:
@@ -175,7 +175,7 @@ def savefig(keys_or_function=None, include_classes="file",
                 saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
 
                 if len(saving_path) > max_str_length:
-                    saving_path = "{}.lzma".format(hash(os.path.splitext(saving_path)[0]))
+                    saving_path = hash_path(saving_path)
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
 
                 if not Path(saving_path).exists() or overwrite:
