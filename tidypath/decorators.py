@@ -88,9 +88,9 @@ def savedata(keys_or_function=None, include_classes="file",
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
 
-            if len(saving_path) > max_str_length:
+            filename_too_long = len(saving_path) > max_str_length
+            if filename_too_long:
                 saving_path = hash_path(saving_path)
-                warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
 
             if Path(saving_path).exists() and not overwrite:
                 try:
@@ -100,6 +100,8 @@ def savedata(keys_or_function=None, include_classes="file",
                     result = func(*args, **kwargs)
                     getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             else:
+                if filename_too_long:
+                    warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
                 result = func(*args, **kwargs)
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             return result
