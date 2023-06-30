@@ -64,11 +64,11 @@ def getopt_printer(opts):
     """Prints getopt input in a readable way."""
     print('\n'.join(f'{opt} => {arg}' for opt, arg in (("Args", "Values"), *opts)))
 
-def dict_to_id(*args, ndigits=2, join_char="_", **kwargs):
+def dict_to_id(*args, ndigits=2, join_char="_", iterable_maxsize=3, **kwargs):
     """Generate ID of the form k1-v1_k2-v2... for k_i, v_i keys and values of the dictionary d or the kwargs."""
     key_formatter = lambda k: k.replace("_", "-")
     d = args[0] if len(args) > 0 else kwargs
-    return join_char.join([f"{key_formatter(k)}-{encoder(d[k], ndigits=ndigits)}" for k in sorted(d.keys())])
+    return join_char.join([f"{key_formatter(k)}-{encoder(d[k], ndigits=ndigits, iterable_maxsize=iterable_maxsize)}" for k in sorted(d.keys())])
 
 def id_to_dict(identifier):
     """Inverse of dict_to_id."""

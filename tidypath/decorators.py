@@ -30,6 +30,7 @@ def savedata(keys_or_function=None, include_classes="file",
              ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
              overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
              max_str_length=255,
+             iterable_maxsize=3,
              load_opts={}, **save_opts):
     """
     Decorator for automatically saving output and then loading cached data.
@@ -66,6 +67,7 @@ def savedata(keys_or_function=None, include_classes="file",
         - save_opts:               kws for storage.save_ext
         - load_opts_default_save:  use save_opts as default for load_opts.
         - max_str_length:          max length of filename. If exceeded, filename is shortened by hashing it.
+        - iterable_maxsize:        max size of iterable keys. If exceeded, keys are shortened by counting val numbers.
         - rest:                    default behavior for decorated funcs extra arguments (above).
 
     Returns: Function decorator
@@ -86,7 +88,7 @@ def savedata(keys_or_function=None, include_classes="file",
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
-            saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
+            saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
 
             filename_too_long = len(saving_path) > max_str_length
             if filename_too_long:
@@ -119,6 +121,7 @@ def savedata(keys_or_function=None, include_classes="file",
 def savefig(keys_or_function=None, include_classes="file",
             ext=config.EXT_DEFAULT_FIG, keys=config.KEYS_DEFAULT_FIG, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_FIG, return_fig=config.RETURN_FIG_DEFAULT,
             max_str_length=255,
+            iterable_maxsize=3,
             overwrite=True, save=True,  #defaults for extra arguments
             **save_opts):
     """
@@ -153,6 +156,7 @@ def savefig(keys_or_function=None, include_classes="file",
         - include_classes:         include class tree in saving_path.
         - save_opts:               kws for saving function.
         - max_str_length:          max length of filename. If exceeded, filename is shortened by hashing it.
+        - iterable_maxsize:        max size of iterable keys. If exceeded, keys are shortened by counting val numbers.
         - rest:                    default behavior for decorated funcs extra arguments (above).
 
     Returns: Function decorator
@@ -174,7 +178,7 @@ def savefig(keys_or_function=None, include_classes="file",
             if isinstance(fig, (mpl_figure, plotly_figure)):
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
-                saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename)
+                saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
 
                 if len(saving_path) > max_str_length:
                     saving_path = hash_path(saving_path)

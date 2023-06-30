@@ -64,7 +64,7 @@ def module_path(func=None, depth=3, include_classes="file", skip=1):
     path = os.path.join(*module.split(".")[1:], class_tree, func_name)
     return path
 
-def saving_path(Dir, ext, keys={}, subfolder="", return_dir=False, funcname_in_filename=False, **kwargs):
+def saving_path(Dir, ext, keys={}, subfolder="", return_dir=False, funcname_in_filename=False, iterable_maxsize=3, **kwargs):
     """Tree path: subfolder -> module -> (classes) -> func_name."""
     parentDir = os.path.join(Dir, subfolder, module_path(**kwargs))
     Path(parentDir).mkdir(exist_ok=True, parents=True)
@@ -72,9 +72,9 @@ def saving_path(Dir, ext, keys={}, subfolder="", return_dir=False, funcname_in_f
         return parentDir
     else:
         if funcname_in_filename:
-            filename = parentDir.split("/")[-1] + f"_{dict_to_id(keys)}_.{ext}"
+            filename = parentDir.split("/")[-1] + f"_{dict_to_id(keys, iterable_maxsize=iterable_maxsize)}_.{ext}"
         else:
-            filename = f"{dict_to_id(keys)}_.{ext}"
+            filename = f"{dict_to_id(keys, iterable_maxsize=iterable_maxsize)}_.{ext}"
         return os.path.join(parentDir, filename)
 
 def figpath(ext="png", **kwargs):
