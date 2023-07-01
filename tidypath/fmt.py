@@ -28,7 +28,7 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=
         if len(x) >= iterable_maxsize:
             return "{}-values".format(str(len(x)))
         else:
-            return dict_to_id(x, ndigits=ndigits, join_char="-")
+            return dict_to_id(x, ndigits=ndigits, join_char="-", iterable_maxsize=iterable_maxsize)
     elif isinstance(x, iterables):
         if len(x) >= iterable_maxsize:
             return "{}-values".format(str(len(x)))
