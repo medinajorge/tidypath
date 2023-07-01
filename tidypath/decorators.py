@@ -30,7 +30,7 @@ def savedata(keys_or_function=None, include_classes="file",
              ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
              overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
              max_str_length=255,
-             iterable_maxsize=np.inf,
+             iterable_maxsize=math.inf,
              load_opts={}, **save_opts):
     """
     Decorator for automatically saving output and then loading cached data.
