@@ -13,6 +13,8 @@ import sys
 import inspect
 import warnings
 import numpy as np
+import pandas as pd
+import datetime
 from copy import deepcopy
 from collections.abc import Iterable
 from pathlib import Path
@@ -21,6 +23,19 @@ from .inspection import get_class_that_defined_method
 
 dataDir = "data"
 figDir = "figs"
+
+def time_since_last_update(parent_dir, ext='lzma'):
+    """
+    Returns a pandas Series with the time since last update of each file in parent_dir.
+    """
+    t = {}
+    today = datetime.datetime.now()
+    for f in os.listdir(parent_dir):
+        if ext is None or f.endswith(ext):
+            path = os.path.join(parent_dir, f)
+            last_update = today - pd.to_datetime(Path(path).stat().st_mtime, unit='s')
+            t[path] = last_update
+    return pd.Series(t).sort_values()
 
 def hash_path(path):
     """
