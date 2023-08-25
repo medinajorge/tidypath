@@ -19,6 +19,7 @@ if find_spec("matplotlib") is None:
     mpl_figure = NoFigure
 else:
     from matplotlib.figure import Figure as mpl_figure
+    from matplotlib.axes._subplots import AxesSubplot as mpl_axes
     import matplotlib.pyplot as plt
 
 from . import storage, config
@@ -176,7 +177,7 @@ def savefig(keys_or_function=None, include_classes="file",
         @wraps(func)
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
             fig = func(*args, **kwargs)
-            if isinstance(fig, (mpl_figure, plotly_figure)):
+            if isinstance(fig, (mpl_figure, mpl_axes, plotly_figure)):
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
                 saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
@@ -186,7 +187,7 @@ def savefig(keys_or_function=None, include_classes="file",
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
 
                 if not Path(saving_path).exists() or overwrite:
-                    if isinstance(fig, mpl_figure):
+                    if isinstance(fig, (mpl_figure, mpl_axes)):
                         fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
                         plt.close(fig)
                     elif isinstance(fig, plotly_figure):
