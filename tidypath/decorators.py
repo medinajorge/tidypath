@@ -26,11 +26,14 @@ from .paths import datapath, figpath, hash_path
 from .inspection import classify_call_attrs, merge_wrapper_signatures
 from ._helper import merge_nested_dict
 
+class SavedataSkippedComputation:
+    pass
 
 def savedata(keys_or_function=None, include_classes="file",
              ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
              overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
              max_str_length=255,
+             skip_computation=False,
              iterable_maxsize=math.inf,
              load_opts={}, **save_opts):
     """
@@ -58,6 +61,7 @@ def savedata(keys_or_function=None, include_classes="file",
                                                                     else                               =>  all attrs except pos_only: kwargs_full + args
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
+        - skip_computation (bool).     whether to skip computation if the data is not stored.
 
     Attrs:
         - function:                function to which the decorator is applied
@@ -86,7 +90,7 @@ def savedata(keys_or_function=None, include_classes="file",
 
     def _savedata(func):
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
@@ -95,7 +99,11 @@ def savedata(keys_or_function=None, include_classes="file",
             if filename_too_long:
                 saving_path = hash_path(saving_path)
 
-            if Path(saving_path).exists() and not overwrite:
+            if skip_computation and not Path(saving_path).exists():
+                warnings.warn("Skipping computation. Data not stored.", RuntimeWarning)
+                return SavedataSkippedComputation()
+
+            elif Path(saving_path).exists() and not overwrite:
                 try:
                     result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
                 except EOFError or LZMAError:
@@ -109,7 +117,7 @@ def savedata(keys_or_function=None, include_classes="file",
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             return result
 
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation"])
         wrapper.__out__ = "data"
         return wrapper
 
