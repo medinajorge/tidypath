@@ -11,6 +11,7 @@ from collections.abc import Iterable
 from importlib.util import find_spec
 from ._helper import NoFigure
 from lzma import LZMAError
+import _lzma
 if find_spec("plotly") is None:
     plotly_figure = NoFigure
 else:
@@ -106,7 +107,7 @@ def savedata(keys_or_function=None, include_classes="file",
             elif Path(saving_path).exists() and not overwrite:
                 try:
                     result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
-                except EOFError or LZMAError:
+                except EOFError or LZMAError or _lzma.LZMAError:
                     warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
                     result = func(*args, **kwargs)
                     getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
