@@ -111,6 +111,10 @@ def savedata(keys_or_function=None, include_classes="file",
                     warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
                     result = func(*args, **kwargs)
                     getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
+                except:
+                    warnings.warn("Unexpected error. Recomputing and storing ...", RuntimeWarning)
+                    result = func(*args, **kwargs)
+                    getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             else:
                 if filename_too_long:
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
