@@ -108,16 +108,24 @@ def savedata(keys_or_function=None, include_classes="file",
                 try:
                     result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
                 except EOFError or LZMAError or _lzma.LZMAError:
-                    warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                    result = func(*args, **kwargs)
-                    getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
+                    if skip_computation:
+                        warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                        return SavedataSkippedComputation()
+                    else:
+                        warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                        result = func(*args, **kwargs)
+                        getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
                 except KeyboardInterrupt:
                     raise KeyboardInterrupt
                 except Exception as e:
                     print(e)
-                    warnings.warn("Unexpected error. Recomputing and storing ...", RuntimeWarning)
-                    result = func(*args, **kwargs)
-                    getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
+                    if skip_computation:
+                        warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                        return SavedataSkippedComputation()
+                    else:
+                        warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                        result = func(*args, **kwargs)
+                        getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             else:
                 if filename_too_long:
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
