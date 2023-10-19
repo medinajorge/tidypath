@@ -63,11 +63,12 @@ def savedata(keys_or_function=None, include_classes="file",
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
         - skip_computation (bool).     whether to skip computation if the data is not stored.
+        - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext.
+                                   Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
+
 
     Attrs:
         - function:                function to which the decorator is applied
-        - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext.
-                                   Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
         - include_classes:         include class tree in saving_path.
         - load_opts:               kws for storage.load_ext. default kws are those of 'saving_options', those specified update saving_options dict.
         - save_opts:               kws for storage.save_ext
@@ -91,7 +92,7 @@ def savedata(keys_or_function=None, include_classes="file",
 
     def _savedata(func):
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
@@ -133,7 +134,7 @@ def savedata(keys_or_function=None, include_classes="file",
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
             return result
 
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation", "ext"])
         wrapper.__out__ = "data"
         return wrapper
 
@@ -173,11 +174,12 @@ def savefig(keys_or_function=None, include_classes="file",
                                                                     else                               =>  all attrs except pos_only: kwargs_full + args
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
+        - ext:                     storing extension. 'eps' recommended for articles.
+                                   Supported: any extension supported by matplotlib/plotly. Example: 'png', 'eps', 'html' (plotly), etc.
+
 
     Attrs:
         - function:                function to which the decorator is applied
-        - ext:                     storing extension. 'eps' recommended for articles.
-                                   Supported: any extension supported by matplotlib/plotly. Example: 'png', 'eps', 'html' (plotly), etc.
         - include_classes:         include class tree in saving_path.
         - save_opts:               kws for saving function.
         - max_str_length:          max length of filename. If exceeded, filename is shortened by hashing it.
@@ -198,7 +200,7 @@ def savefig(keys_or_function=None, include_classes="file",
 
     def _savefig(func):
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, return_fig=return_fig, funcname_in_filename=funcname_in_filename, ext=ext, **kwargs):
             fig = func(*args, **kwargs)
             is_mpl_axes = type(fig).__name__ == 'AxesSubplot'
             if isinstance(fig, (mpl_figure, plotly_figure)) or is_mpl_axes:
@@ -233,7 +235,7 @@ def savefig(keys_or_function=None, include_classes="file",
             else:
                 warnings.warn("Expected output figure (plotly, matplotlib) or a flag for figure error computation (None, NaN), but received {}".format(type(fig)), RuntimeWarning)
 
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "return_fig"])
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "return_fig", "ext"])
         wrapper.__out__ = "figure"
         return wrapper
 
