@@ -146,6 +146,8 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
                                 while update_file not in ["y", "yes", "n", "no"]:
                                     update_file = input("Filename change example:\n\n'{}' -> '{}'\n\nProceed? [y/n]".format(file, new_filename)).lower()
                                 check_first_k = False
+                            else:
+                                update_file = "y"
                             if update_file in ["y", "yes"]:
                                 os.rename(os.path.join(directory, file),
                                           os.path.join(directory, new_filename))
@@ -172,6 +174,7 @@ def add_arg(func=None, directory=None, check_first=True, overwrite=False, **args
     """
     def process_filename(file, k_name, k, v):
         arg_val = dict_to_id({k:v})
+        new_filename = None
         if arg_val not in file:
             args_in_file = np.sort(os.path.splitext(file)[0].split("_")[:-1] + [k])
             pos_new_arg = np.where(args_in_file == k)[0][0]
@@ -183,9 +186,11 @@ def add_arg(func=None, directory=None, check_first=True, overwrite=False, **args
                 else:
                     insert_before = args_in_file[pos_new_arg + 1]
                 new_filename = file.replace(f"_{insert_before}", f"_{arg_val}_{insert_before}")
-            return new_filename
-        else:
-            return None
+            if new_filename == file:
+                new_filename = None
+
+        return new_filename
+
     filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **args)
     return
 
@@ -224,6 +229,7 @@ def delete_arg(func=None, arg=None, directory=None, check_first=True, overwrite=
                 return file.replace(arg_val_encoded, "")
             else:
                 return None
+
     filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **arg_dict)
     return
 
@@ -243,15 +249,18 @@ def modify_arg(func=None, directory=None, check_first=True, overwrite=False, **a
                                Examples:   Modify an arg -> two filenames are the same -> one remains.
     """
     def process_filename(file, k_name, k, v):
+        new_filename = None
         if file.startswith(f"{k_name}-"):
-            return "_".join([dict_to_id({k:v})] + file.split("_")[1:])
+            new_filename = "_".join([dict_to_id({k:v})] + file.split("_")[1:])
         else:
             mid_file_k_name = f"_{k_name}-"
             if mid_file_k_name in file:
                 arg_val_encoded = "{}{}".format(mid_file_k_name, file.split(mid_file_k_name)[1].split("_")[0])
-                return file.replace(arg_val_encoded, "_{}".format(dict_to_id({k:v})))
-            else:
-                return None
+                new_filename = file.replace(arg_val_encoded, "_{}".format(dict_to_id({k:v})))
+
+        if new_filename == file:
+            new_filename = None
+        return new_filename
 
     filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **args)
     return
