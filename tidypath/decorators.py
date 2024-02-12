@@ -96,8 +96,9 @@ def savedata(keys_or_function=None, include_classes="file",
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
+            filename = os.path.basename(saving_path)
 
-            filename_too_long = len(saving_path) > max_str_length
+            filename_too_long = len(filename) > max_str_length
             if filename_too_long:
                 saving_path = hash_path(saving_path)
 
@@ -207,8 +208,9 @@ def savefig(keys_or_function=None, include_classes="file",
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
                 saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
+                filename = os.path.basename(saving_path)
 
-                if len(saving_path) > max_str_length:
+                if len(filename) > max_str_length:
                     saving_path = hash_path(saving_path)
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
 
