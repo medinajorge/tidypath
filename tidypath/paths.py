@@ -47,41 +47,45 @@ def hash_path(path):
     filename = hash_string(filename)
     return os.path.join(parentDir, f"{filename}{ext}")
 
-def module_path(func=None, depth=3, include_classes="file", skip=1):
+def class_path(func, include_classes="file", skip=1):
     """
     returns module path and func_name.
 
     include_classes:   'file': path: module -> class tree contained in func file -> func_name.
                        'all': path: module -> full class tree -> func_name.
     """
-    if func is None:
-        frame = sys._getframe(depth)
-        func_name = frame.f_code.co_name
-        module = frame.f_globals["__name__"]
-    else:
-        func_name = func.__name__
-        module = func.__module__
+    func_name = func.__name__
+    module = func.__module__
     if include_classes:
         func_class = get_class_that_defined_method(func)
         if func_class is not None:
             if include_classes == "file":
                 clsmembers = inspect.getmembers(sys.modules[module], inspect.isclass)
                 cls_names, clss = zip(*clsmembers)
-                class_tree = "/".join([c.__name__.lower() for c in func_class.mro()[:-skip][::-1] if c in clss])
+                class_tree = "/".join([c.__name__ for c in func_class.mro()[:-skip][::-1] if c in clss])
             elif include_classes == "all":
-                "/".join([c.__name__.lower() for c in func.__class__.mro()[:-skip][::-1]])
+                class_tree = "/".join([c.__name__ for c in func.__class__.mro()[:-skip][::-1]])
             else:
                 raise ValueError(f"include_classes: {include_classes} not valid. Available: 'file', 'all', ''.")
         else:
             class_tree = ""
     else:
         class_tree = ""
-    path = os.path.join(*module.split(".")[1:], class_tree, func_name)
+    path = os.path.join(class_tree, func_name)
     return path
 
-def saving_path(Dir, ext, keys={}, subfolder="", return_dir=False, funcname_in_filename=False, iterable_maxsize=3, **kwargs):
-    """Tree path: subfolder -> module -> (classes) -> func_name."""
-    parentDir = os.path.join(Dir, subfolder, module_path(**kwargs))
+def saving_path(Dir, ext, func, keys={}, subfolder="", return_dir=False, funcname_in_filename=False, iterable_maxsize=3, **kwargs):
+    """Tree path: Dir -> subfolder -> module -> (classes) -> func_name."""
+    func_path = inspect.getabsfile(func).replace('.py', '')
+    module_head = func.__module__.split('.')[0]
+    path_split = func_path.split(module_head + '/')
+    parentDir = os.path.join(path_split[0],
+                             Dir,
+                             subfolder,
+                             module_head,
+                             *path_split[1:],
+                             class_path(func=func, **kwargs)
+                             )
     Path(parentDir).mkdir(exist_ok=True, parents=True)
     if return_dir:
         return parentDir
