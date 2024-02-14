@@ -122,9 +122,9 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
             raise RuntimeError("Please provide 'func' or 'directory' but not both.")
         else:
             if func.__out__ == "data":
-                directory = datapath(func=func, return_dir=True)
+                directory = datapath(func=func.__wrapped__, return_dir=True)
             else:
-                directory = figpath(func=func, return_dir=True)
+                directory = figpath(func=func.__wrapped__, return_dir=True)
     elif directory is None:
         raise RuntimeError("Provide 'func' (preferred) or 'directory'.")
 
