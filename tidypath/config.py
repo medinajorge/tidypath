@@ -11,8 +11,8 @@ except ImportError:
     _HAVE_YAML = False
 
 # this is the name of the user supplied configuration file
-_config_fname = '.tidypath_config.yaml'    
-    
+_config_fname = '.tidypath_config.yaml'
+
 class _EnvReloader(object):
 
     def __init__(self):
@@ -76,11 +76,11 @@ class _EnvReloader(object):
             Examples:
                         ENV_VAR = _readenv(TIDYPATH_ENV_VAR, optional_str, None)
                         ENV_VAR = _readenv(TIDYPATH_ENV_VAR, optional_str,
-                                           (val if condition 
+                                           (val if condition
                                             else None))
             """
             return str(x) if x is not None else None
-        
+
         def to_bool(x):
             if isinstance(x, str):
                 if x.lower() in ["true", "t", "y", "yes"]:
@@ -95,20 +95,20 @@ class _EnvReloader(object):
                 return x == 1
             else:
                 raise TypeError("x must be of type 'str' or 'int'. Received {}".format(type(x)))
-        
+
         KEYS_DEFAULT = _readenv("TIDYPATH_KEYS_DEFAULT", str, "kwargs_full")
         KEYS_DEFAULT_DATA = _readenv("TIDYPATH_KEYS_DEFAULT_DATA", str, KEYS_DEFAULT)
         KEYS_DEFAULT_FIG = _readenv("TIDYPATH_KEYS_DEFAULT_FIG", str, KEYS_DEFAULT)
         KEYS_ADD_POSONLY_TO_ALL = _readenv("TIDYPATH_KEYS_ADD_POSONLY_TO_ALL", to_bool, False)
-        
+
         EXT_DEFAULT_DATA = _readenv("TIDYPATH_EXT_DEFAULT_DATA", str, "lzma")
-        EXT_DEFAULT_FIG = _readenv("TIDYPATH_EXT_DEFAULT_FIG", str, "png")
-        
+        EXT_DEFAULT_FIG = _readenv("TIDYPATH_EXT_DEFAULT_FIG", str, "pdf")
+
         FUNCNAME_IN_FILENAME_DEFAULT_DATA = _readenv("TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_DATA", to_bool, False)
         FUNCNAME_IN_FILENAME_DEFAULT_FIG = _readenv("TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_FIG", to_bool, True)
-        
+
         RETURN_FIG_DEFAULT = _readenv("TIDYPATH_RETURN_FIG_DEFAULT", to_bool, False)
-        
+
         # Inject the configuration values into the module globals
         for name, value in locals().copy().items():
             if name.isupper():
