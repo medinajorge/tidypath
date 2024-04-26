@@ -106,7 +106,7 @@ def savedata(keys_or_function=None, include_classes="file",
 
             result = None
             def compute_and_save(result, ext, saving_path):
-                if result is not None:
+                if result is None:
                     result = func(*args, **kwargs)
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
                 return result
