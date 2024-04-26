@@ -63,7 +63,7 @@ def savedata(keys_or_function=None, include_classes="file",
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
         - skip_computation (bool).     whether to skip computation if the data is not stored.
-        - ext:                     storing extension. Selects 'storage' functions save_ext, load_ext.
+        - ext (str/list/tuple):    storing extension. Selects 'storage' functions save_ext, load_ext.
                                    Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
 
 
@@ -95,44 +95,51 @@ def savedata(keys_or_function=None, include_classes="file",
         def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
-            saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
-            filename = os.path.basename(saving_path)
 
-            filename_too_long = len(filename) > max_str_length
-            if filename_too_long:
-                saving_path = hash_path(saving_path)
-
-            if skip_computation and not Path(saving_path).exists():
-                warnings.warn("Skipping computation. Data not stored.", RuntimeWarning)
-                return SavedataSkippedComputation()
-
-            elif Path(saving_path).exists() and not overwrite:
-                try:
-                    result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
-                except EOFError or LZMAError or _lzma.LZMAError:
-                    if skip_computation:
-                        warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
-                        return SavedataSkippedComputation()
-                    else:
-                        warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                        result = func(*args, **kwargs)
-                        getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
-                except KeyboardInterrupt:
-                    raise KeyboardInterrupt
-                except Exception as e:
-                    print(e)
-                    if skip_computation:
-                        warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
-                        return SavedataSkippedComputation()
-                    else:
-                        warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                        result = func(*args, **kwargs)
-                        getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
-            else:
-                if filename_too_long:
+            def get_saving_path(ext):
+                saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
+                filename = os.path.basename(saving_path)
+                if len(filename) > max_str_length:
+                    saving_path = hash_path(saving_path)
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
-                result = func(*args, **kwargs)
+                return saving_path
+
+            result = None
+            def compute_and_save(result, ext, saving_path):
+                if result is not None:
+                    result = func(*args, **kwargs)
                 getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
+                return result
+
+            if isinstance(ext, str):
+                ext = [ext]
+            for ext_i in ext:
+                saving_path = get_saving_path(ext_i)
+                if skip_computation and not Path(saving_path).exists():
+                    warnings.warn("Skipping computation. Data not stored.", RuntimeWarning)
+                    return SavedataSkippedComputation()
+                elif Path(saving_path).exists() and not overwrite:
+                    try:
+                        result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
+                    except EOFError or LZMAError or _lzma.LZMAError:
+                        if skip_computation:
+                            warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                            return SavedataSkippedComputation()
+                        else:
+                            warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                            result = compute_and_save(result, ext_i, saving_path)
+                    except KeyboardInterrupt:
+                        raise KeyboardInterrupt
+                    except Exception as e:
+                        print(e)
+                        if skip_computation:
+                            warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                            return SavedataSkippedComputation()
+                        else:
+                            warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                            result = compute_and_save(result, ext_i, saving_path)
+                else:
+                    result = compute_and_save(result, ext_i, saving_path)
             return result
 
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation", "ext"])
@@ -175,7 +182,7 @@ def savefig(keys_or_function=None, include_classes="file",
                                                                     else                               =>  all attrs except pos_only: kwargs_full + args
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
-        - ext:                     storing extension. 'eps' recommended for articles.
+        - ext (str/list/tuple):    Storing extension. 'pdf' recommended for articles.
                                    Supported: any extension supported by matplotlib/plotly. Example: 'png', 'eps', 'html' (plotly), etc.
 
 
@@ -207,26 +214,35 @@ def savefig(keys_or_function=None, include_classes="file",
             if isinstance(fig, (mpl_figure, plotly_figure)) or is_mpl_axes:
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
-                saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
-                filename = os.path.basename(saving_path)
+                def get_saving_path(ext):
+                    saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
+                    filename = os.path.basename(saving_path)
+                    if len(filename) > max_str_length:
+                        saving_path = hash_path(saving_path)
+                        warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
+                    return saving_path
 
-                if len(filename) > max_str_length:
-                    saving_path = hash_path(saving_path)
-                    warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
+                if is_mpl_axes:
+                    fig = fig.get_figure()
+                is_mpl = isinstance(fig, mpl_figure)
 
-                if not Path(saving_path).exists() or overwrite:
-                    if is_mpl_axes:
-                        fig = fig.get_figure()
-                    if isinstance(fig, mpl_figure):
-                        fig.savefig(saving_path, format=ext, **{**mpl_save_defaults, **save_opts})
-                        plt.close(fig)
-                    elif isinstance(fig, plotly_figure):
-                        if ext == "html":
-                            fig.write_html(saving_path, **save_opts)
+                if isinstance(ext, str):
+                    ext = [ext]
+                for ext_i in ext:
+                    saving_path = get_saving_path(ext_i)
+                    if not Path(saving_path).exists() or overwrite:
+                        if is_mpl:
+                            fig.savefig(saving_path, format=ext_i, **{**mpl_save_defaults, **save_opts})
+                        elif isinstance(fig, plotly_figure):
+                            if ext_i == "html":
+                                fig.write_html(saving_path, **save_opts)
+                            else:
+                                fig.write_image(saving_path, format=ext_i, **save_opts)
                         else:
-                            fig.write_image(saving_path, format=ext, **save_opts)
-                    else:
-                        raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'matplotlib.axes._subplots.AxesSubplot', 'plotly.grap_objs._figure.Figure'.")
+                            raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'matplotlib.axes._subplots.AxesSubplot', 'plotly.grap_objs._figure.Figure'.")
+
+                if is_mpl:
+                    plt.close(fig)
 
                 if return_fig:
                     return fig
