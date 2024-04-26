@@ -120,7 +120,7 @@ def savedata(keys_or_function=None, include_classes="file",
                     return SavedataSkippedComputation()
                 elif Path(saving_path).exists() and not overwrite:
                     try:
-                        result = getattr(storage, f"load_{ext}")(saving_path, **load_opts)
+                        result = getattr(storage, f"load_{ext_i}")(saving_path, **load_opts)
                     except EOFError or LZMAError or _lzma.LZMAError:
                         if skip_computation:
                             warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
