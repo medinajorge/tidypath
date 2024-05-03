@@ -104,7 +104,7 @@ def savedata(keys_or_function=None, include_classes="file",
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             if extra_keys:
-                save_keys.update(extra_keys)
+                save_keys = {**extra_keys, **save_keys}
 
             def get_saving_path(ext):
                 saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
@@ -219,7 +219,7 @@ def savefig(keys_or_function=None, include_classes="file",
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
                 if extra_keys:
-                    save_keys.update(extra_keys)
+                    save_keys = {**extra_keys, **save_keys}
                 def get_saving_path(ext):
                     saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
                     filename = os.path.basename(saving_path)
