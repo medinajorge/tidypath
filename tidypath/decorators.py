@@ -30,8 +30,23 @@ from ._helper import merge_nested_dict
 class SavedataSkippedComputation:
     pass
 
+def _preprocess_keys_or_function(keys_or_function, keys, extra_keys):
+    if isinstance(keys_or_function, Iterable):
+        func = None
+        if isinstance(keys_or_function, dict):
+            extra_keys = keys_or_function
+        else:
+            keys = keys_or_function
+    elif callable(keys_or_function):
+        func = keys_or_function
+    else:
+        func = None
+    return func, keys, extra_keys
+
+
 def savedata(keys_or_function=None, include_classes="file",
-             ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
+             ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, extra_keys={},
+             funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
              overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
              max_str_length=255,
              skip_computation=False,
@@ -50,9 +65,7 @@ def savedata(keys_or_function=None, include_classes="file",
         - save (bool).                 whether to save the output of the function.
         - overwrite (bool).            whether to overwrite the saved version.
         - funcname_in_filename(bool)   whether to include funcname in the filename.
-        - keys (dict/str/iterable)   · dict:     specifies filename of the form k1-v1_k2-v2_...kn_vn.
-                                                 k_i do not have to be arguments of the function.
-                                     · str:       key of a keyword argument. Example: keys = 'x'.
+        - keys (dict/str/iterable)    · str:       key of a keyword argument. Example: keys = 'x'.
                                                  "kwargs_defaults"  =>  default kwargs that were not modified.
                                                  "kwargs"           =>  kwargs passed during function call.
                                                  "kwargs_full"      =>  kws_defaults + kws.
@@ -62,6 +75,7 @@ def savedata(keys_or_function=None, include_classes="file",
                                                                     else                               =>  all attrs except pos_only: kwargs_full + args
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
+        - extra_keys (dict):         additional keys to be included in the filename. They do not have to be arguments of the function.
         - skip_computation (bool).     whether to skip computation if the data is not stored.
         - ext (str/list/tuple):    storing extension. Selects 'storage' functions save_ext, load_ext.
                                    Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
@@ -79,22 +93,18 @@ def savedata(keys_or_function=None, include_classes="file",
 
     Returns: Function decorator
     """
-    if isinstance(keys_or_function, Iterable):
-        keys = keys_or_function
-        func = None
-    elif callable(keys_or_function):
-        func = keys_or_function
-    else:
-        func = None
+    func, keys, extra_keys = _preprocess_keys_or_function(keys_or_function, keys, extra_keys)
 
     if load_opts_default_save:
         load_opts = {**save_opts, **load_opts}
 
     def _savedata(func):
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, extra_keys=extra_keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
+            if extra_keys:
+                save_keys.update(extra_keys)
 
             def get_saving_path(ext):
                 saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
@@ -153,7 +163,8 @@ def savedata(keys_or_function=None, include_classes="file",
 
 
 def savefig(keys_or_function=None, include_classes="file",
-            ext=config.EXT_DEFAULT_FIG, keys=config.KEYS_DEFAULT_FIG, funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_FIG, return_fig=config.RETURN_FIG_DEFAULT,
+            ext=config.EXT_DEFAULT_FIG, keys=config.KEYS_DEFAULT_FIG, extra_keys={},
+            funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_FIG, return_fig=config.RETURN_FIG_DEFAULT,
             max_str_length=255,
             iterable_maxsize=3,
             overwrite=True, save=True,  #defaults for extra arguments
@@ -170,9 +181,7 @@ def savefig(keys_or_function=None, include_classes="file",
         - save (bool).                 whether to save the figure.
         - overwrite (bool).            whether to overwrite the saved version.
         - funcname_in_filename(bool)   whether to include funcname in the filename.
-        - keys (dict/str/iterable)   · dict:     specifies filename of the form k1-v1_k2-v2_...kn_vn.
-                                                 k_i do not have to be arguments of the function.
-                                     · str:       key of a keyword argument. Example: keys = 'x'.
+        - keys (dict/str/iterable)   · str:       key of a keyword argument. Example: keys = 'x'.
                                                  "kwargs_defaults"  =>  default kwargs that were not modified.
                                                  "kwargs"           =>  kwargs passed during function call.
                                                  "kwargs_full"      =>  kws_defaults + kws.
@@ -182,6 +191,7 @@ def savefig(keys_or_function=None, include_classes="file",
                                                                     else                               =>  all attrs except pos_only: kwargs_full + args
                                                  can combine options using "+" or "-". Example: "args+z", "x+y+kwargs", "all-y".
                                      · iterable: containing a combination of the available string keys (above). ["k1", "k2"] == "k1+k2".
+        - extra_keys (dict):         additional keys to be included in the filename. They do not have to be arguments of the function.
         - ext (str/list/tuple):    Storing extension. 'pdf' recommended for articles.
                                    Supported: any extension supported by matplotlib/plotly. Example: 'png', 'eps', 'html' (plotly), etc.
 
@@ -196,13 +206,7 @@ def savefig(keys_or_function=None, include_classes="file",
 
     Returns: Function decorator
     """
-    if isinstance(keys_or_function, Iterable):
-        keys = keys_or_function
-        func = None
-    elif callable(keys_or_function):
-        func = keys_or_function
-    else:
-        func = None
+    func, keys, extra_keys = _preprocess_keys_or_function(keys_or_function, keys, extra_keys)
 
     mpl_save_defaults = dict(bbox_inches="tight")
 
@@ -214,6 +218,8 @@ def savefig(keys_or_function=None, include_classes="file",
             if isinstance(fig, (mpl_figure, plotly_figure)) or is_mpl_axes:
                 key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
                 save_keys = merge_nested_dict(key_opts, keys, key_default="all")
+                if extra_keys:
+                    save_keys.update(extra_keys)
                 def get_saving_path(ext):
                     saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
                     filename = os.path.basename(saving_path)
