@@ -78,14 +78,22 @@ def saving_path(Dir, ext, func, keys={}, subfolder="", return_dir=False, funcnam
     """Tree path: Dir -> subfolder -> module -> (classes) -> func_name."""
     func_path = inspect.getabsfile(func).replace('.py', '')
     module_head = func.__module__.split('.')[0]
-    path_split = func_path.split(module_head + '/')
-    parentDir = os.path.join(path_split[0],
-                             Dir,
-                             subfolder,
-                             module_head,
-                             *path_split[1:],
-                             class_path(func=func, **kwargs)
-                             )
+    if module_head == '__main__':
+        parentDir = os.path.join(Dir,
+                                 subfolder,
+                                 module_head,
+                                 class_path(func=func, **kwargs)
+                                 )
+        warnings.warn(f"Module {module_head} is '__main__'. Saving in {parentDir}.", RuntimeWarning)
+    else:
+        path_split = func_path.split(module_head + '/')
+        parentDir = os.path.join(path_split[0],
+                                 Dir,
+                                 subfolder,
+                                 module_head,
+                                 *path_split[1:],
+                                 class_path(func=func, **kwargs)
+                                 )
     Path(parentDir).mkdir(exist_ok=True, parents=True)
     if return_dir:
         return parentDir
