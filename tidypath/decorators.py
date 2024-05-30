@@ -115,10 +115,11 @@ def savedata(keys_or_function=None, include_classes="file",
                 return saving_path
 
             result = None
-            def compute_and_save(result, ext, saving_path):
+            def compute(result, ext, saving_path):
                 if result is None:
                     result = func(*args, **kwargs)
-                getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
+                if save:
+                    getattr(storage, f"save_{ext}")(result, saving_path, **save_opts)
                 return result
 
             if isinstance(ext, str):
@@ -137,7 +138,7 @@ def savedata(keys_or_function=None, include_classes="file",
                             return SavedataSkippedComputation()
                         else:
                             warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                            result = compute_and_save(result, ext_i, saving_path)
+                            result = compute(result, ext_i, saving_path)
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt
                     except Exception as e:
@@ -147,9 +148,9 @@ def savedata(keys_or_function=None, include_classes="file",
                             return SavedataSkippedComputation()
                         else:
                             warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                            result = compute_and_save(result, ext_i, saving_path)
+                            result = compute(result, ext_i, saving_path)
                 else:
-                    result = compute_and_save(result, ext_i, saving_path)
+                    result = compute(result, ext_i, saving_path)
             return result
 
         wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation", "ext"])
@@ -232,27 +233,28 @@ def savefig(keys_or_function=None, include_classes="file",
                     fig = fig.get_figure()
                 is_mpl = isinstance(fig, mpl_figure)
 
-                if isinstance(ext, str):
-                    ext = [ext]
-                for ext_i in ext:
-                    saving_path = get_saving_path(ext_i)
-                    if not Path(saving_path).exists() or overwrite:
-                        if is_mpl:
-                            fig.savefig(saving_path, format=ext_i, **{**mpl_save_defaults, **save_opts})
-                        elif isinstance(fig, plotly_figure):
-                            if ext_i == "html":
-                                fig.write_html(saving_path, **save_opts)
+                if save:
+                    if isinstance(ext, str):
+                        ext = [ext]
+                    for ext_i in ext:
+                        saving_path = get_saving_path(ext_i)
+                        if not Path(saving_path).exists() or overwrite:
+                            if is_mpl:
+                                fig.savefig(saving_path, format=ext_i, **{**mpl_save_defaults, **save_opts})
+                            elif isinstance(fig, plotly_figure):
+                                if ext_i == "html":
+                                    fig.write_html(saving_path, **save_opts)
+                                else:
+                                    fig.write_image(saving_path, format=ext_i, **save_opts)
                             else:
-                                fig.write_image(saving_path, format=ext_i, **save_opts)
-                        else:
-                            raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'matplotlib.axes._subplots.AxesSubplot', 'plotly.grap_objs._figure.Figure'.")
+                                raise TypeError(f"fig type '{type(fig)}' not valid. Available: 'matplotlib.figure.Figure', 'matplotlib.axes._subplots.AxesSubplot', 'plotly.grap_objs._figure.Figure'.")
 
-                if is_mpl:
-                    plt.close(fig)
 
                 if return_fig:
                     return fig
                 else:
+                    if is_mpl:
+                        plt.close(fig)
                     return
             elif fig is None or math.isnan(fig):
                 warnings.warn("Expected output figure (plotly or matplotlib) and received None or NaN.", RuntimeWarning)
