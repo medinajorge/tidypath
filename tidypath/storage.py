@@ -65,10 +65,11 @@ def save_csv(data, filename, parent_dir=parent_dir, **kwargs):
     (required by np.savetxt)
     """
     parent_dir, filename = save_preprocess(filename, "csv", parent_dir)
+    file_path = os.path.join(parent_dir, filename)
     if isinstance(data, (pd.core.frame.DataFrame, pd.core.series.Series)):
-        data.to_csv(filename, **kwargs)
+        data.to_csv(file_path, **kwargs)
     else:
-        np.savetxt(filename, data, delimiter=',', **kwargs)
+        np.savetxt(file_path, data, delimiter=',', **kwargs)
     return
 
 
