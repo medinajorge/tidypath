@@ -110,7 +110,7 @@ def figpath(ext="png", **kwargs):
 def datapath(ext="lzma", **kwargs):
     return saving_path(dataDir, ext, **kwargs)
 
-def filename_modifier(process_filename, func=None, directory=None, check_first=True, overwrite=False, **args):
+def filename_modifier(process_filename, func_or_directory=None, check_first=True, overwrite=False, **args):
     """
     Base function for adding/deleting/modifying function args encoded in the output filenames.
 
@@ -125,16 +125,16 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
                                Examples:   add/modify/delete an arg -> two filenames are the same -> one remains.
         - args (kwargs):       Arguments to add/delete/modify in the filename.
     """
-    if func is not None:
-        if directory is not None:
-            raise RuntimeError("Please provide 'func' or 'directory' but not both.")
+    if callable(func_or_directory):
+        func = func_or_directory
+        if func.__out__ == "data":
+            directory = datapath(func=func.__wrapped__, return_dir=True)
         else:
-            if func.__out__ == "data":
-                directory = datapath(func=func.__wrapped__, return_dir=True)
-            else:
-                directory = figpath(func=func.__wrapped__, return_dir=True)
-    elif directory is None:
-        raise RuntimeError("Provide 'func' (preferred) or 'directory'.")
+            directory = figpath(func=func.__wrapped__, return_dir=True)
+    elif isinstance(func_or_directory, str):
+        directory = func_or_directory
+    else:
+        raise ValueError(f"func_or_directory {func_or_directory} not valid. Must be a function or a path.")
 
     args_sorted = {k: args[k] for k in sorted(args)}
     abort_changes = False
@@ -169,7 +169,7 @@ def filename_modifier(process_filename, func=None, directory=None, check_first=T
                                 break
     return
 
-def add_arg(func=None, directory=None, check_first=True, overwrite=False, **args):
+def add_arg(func_or_directory=None, check_first=True, overwrite=False, **args):
     """
     Encodes new function args into filename.
     Useful when:
@@ -203,10 +203,10 @@ def add_arg(func=None, directory=None, check_first=True, overwrite=False, **args
 
         return new_filename
 
-    filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **args)
+    filename_modifier(process_filename, func_or_directory=func_or_directory, check_first=check_first, overwrite=overwrite, **args)
     return
 
-def delete_arg(func=None, arg=None, directory=None, check_first=True, overwrite=False):
+def delete_arg(func_or_directory=None, arg=None, check_first=True, overwrite=False):
     """
     Delete encoded function arg from filename.
     Useful when:
@@ -242,10 +242,10 @@ def delete_arg(func=None, arg=None, directory=None, check_first=True, overwrite=
             else:
                 return None
 
-    filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **arg_dict)
+    filename_modifier(process_filename, func_or_directory=func_or_directory, check_first=check_first, overwrite=overwrite, **arg_dict)
     return
 
-def modify_arg(func=None, directory=None, check_first=True, overwrite=False, **args):
+def modify_arg(func_or_directory=None, check_first=True, overwrite=False, **args):
     """
     Modified encoded function arg from filename.
     Useful when:
@@ -274,7 +274,7 @@ def modify_arg(func=None, directory=None, check_first=True, overwrite=False, **a
             new_filename = None
         return new_filename
 
-    filename_modifier(process_filename, func=func, directory=directory, check_first=check_first, overwrite=overwrite, **args)
+    filename_modifier(process_filename, func_or_directory=func_or_directory, check_first=check_first, overwrite=overwrite, **args)
     return
 
 class Organizer():
