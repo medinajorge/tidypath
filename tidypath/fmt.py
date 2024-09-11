@@ -39,24 +39,29 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=
 
 def decoder(x, iterables=(list, tuple, np.ndarray)):
     """string version of x -> x"""
-    if x.lower() == "none":
-        return None
-    elif x.lower() == "false":
-        return False
-    elif x.lower() == "true":
-        return True
-    elif "--" in x:
-        return float(x.replace("--", "."))
-    elif "." in x:
-        try:
-            return float(x)
-        except:
-            return x
+    if isinstance(x, str):
+        if x.lower() == "none":
+            return None
+        elif x.lower() == "false":
+            return False
+        elif x.lower() == "true":
+            return True
+        elif "--" in x:
+            return float(x.replace("--", "."))
+        elif "." in x:
+            try:
+                return float(x)
+            except:
+                return x
     elif isinstance(x, iterables):
         return [decoder(sub_x) for sub_x in x]
     else:
-        try:
-            return int(x)
+        try: # check if x is an integer
+            x_int = int(x)
+            if x_int == x:
+                return x_int
+            else:
+                return x
         except:
             return x
 
