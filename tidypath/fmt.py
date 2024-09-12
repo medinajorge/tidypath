@@ -53,6 +53,11 @@ def decoder(x, iterables=(list, tuple, np.ndarray)):
                 return float(x)
             except:
                 return x
+        else:
+            try:
+                return int(x)
+            except:
+                return x
     elif isinstance(x, iterables):
         return [decoder(sub_x) for sub_x in x]
     else:
