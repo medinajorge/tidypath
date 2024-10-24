@@ -109,7 +109,7 @@ def savedata(keys_or_function=None, include_classes="file",
             def get_saving_path(ext):
                 saving_path = datapath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
                 filename = os.path.basename(saving_path)
-                if len(filename) > max_str_length:
+                if len(filename) + len(ext) + 1 > max_str_length:
                     saving_path = hash_path(saving_path)
                     warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
                 return saving_path
@@ -224,7 +224,7 @@ def savefig(keys_or_function=None, include_classes="file",
                 def get_saving_path(ext):
                     saving_path = figpath(keys=save_keys, func=func, ext=ext, include_classes=include_classes, funcname_in_filename=funcname_in_filename, iterable_maxsize=iterable_maxsize)
                     filename = os.path.basename(saving_path)
-                    if len(filename) > max_str_length:
+                    if len(filename) + len(ext) + 1 > max_str_length:
                         saving_path = hash_path(saving_path)
                         warnings.warn("Filename too long. Hashing it ...", RuntimeWarning)
                     return saving_path
