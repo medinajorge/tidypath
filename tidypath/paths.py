@@ -151,13 +151,14 @@ def filename_modifier(process_filename, func_or_directory=None, check_first=True
                     new_filename = process_filename(file, k_name, k, v)
                     if new_filename is not None:
                         if len(new_filename) > 255:
-                            new_path = hash_path(os.path.join(directory, new_filename))
-                            new_filename_hashed = os.path.basename(new_path)
                             if print_long_filename_k:
+                                new_filename_hashed = hash_path(new_filename)
                                 warnings.warn(f"Filename too long for '{file}'. Hashed to '{new_filename_hashed}'. Warning will not be shown again.", RuntimeWarning)
                                 print_long_filename_k = False
-                        else:
-                            new_path = os.path.join(directory, new_filename)
+                                new_filename = new_filename_hashed
+                            else:
+                                new_filename = hash_path(new_filename)
+                        new_path = os.path.join(directory, new_filename)
                         if Path(new_path).exists() and not overwrite:
                             raise RuntimeError(f"'{new_filename}' already existing before modifying '{file}'. To delete repeated files pass 'overwrite=True'.")
                         else:
@@ -170,7 +171,7 @@ def filename_modifier(process_filename, func_or_directory=None, check_first=True
                                 update_file = "y"
                             if update_file in ["y", "yes"]:
                                 os.rename(os.path.join(directory, file),
-                                          os.path.join(directory, new_filename))
+                                          new_path)
                             else:
                                 warnings.warn("Aborted filename changes.", RuntimeWarning)
                                 abort_changes = True
