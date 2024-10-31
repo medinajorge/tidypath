@@ -141,6 +141,7 @@ def filename_modifier(process_filename, func_or_directory=None, check_first=True
     avoid_files = [".ipynb_checkpoints", "__pycache__"]
     for k, v in args_sorted.items():
         check_first_k = deepcopy(check_first)
+        print_long_filename_k = deepcopy(check_first)
         if abort_changes:
             break
         else:
@@ -149,7 +150,14 @@ def filename_modifier(process_filename, func_or_directory=None, check_first=True
                 if file not in avoid_files:
                     new_filename = process_filename(file, k_name, k, v)
                     if new_filename is not None:
-                        new_path = os.path.join(directory, new_filename)
+                        if len(new_filename) > 255:
+                            new_path = hash_path(os.path.join(directory, new_filename))
+                            new_filename_hashed = os.path.basename(new_path)
+                            if print_long_filename_k:
+                                warnings.warn(f"Filename too long for '{file}'. Hashed to '{new_filename_hashed}'. Warning will not be shown again.", RuntimeWarning)
+                                print_long_filename_k = False
+                        else:
+                            new_path = os.path.join(directory, new_filename)
                         if Path(new_path).exists() and not overwrite:
                             raise RuntimeError(f"'{new_filename}' already existing before modifying '{file}'. To delete repeated files pass 'overwrite=True'.")
                         else:
