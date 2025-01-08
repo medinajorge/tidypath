@@ -126,7 +126,7 @@ def savedata(keys_or_function=None, include_classes="file",
                 ext = [ext]
 
             if return_path:
-                result = [get_saving_path(ext_i) for ext_i in ext]
+                return [get_saving_path(ext_i) for ext_i in ext]
             else:
                 for ext_i in ext:
                     saving_path = get_saving_path(ext_i)
