@@ -47,7 +47,7 @@ def _preprocess_keys_or_function(keys_or_function, keys, extra_keys):
 def savedata(keys_or_function=None, include_classes="file",
              ext=config.EXT_DEFAULT_DATA, keys=config.KEYS_DEFAULT_DATA, extra_keys={},
              funcname_in_filename=config.FUNCNAME_IN_FILENAME_DEFAULT_DATA,
-             overwrite=False, save=True, load_opts_default_save=True,  #defaults for extra arguments
+             overwrite=False, save=True, load_opts_default_save=True, return_path=False, #defaults for extra arguments
              max_str_length=255,
              skip_computation=False,
              iterable_maxsize=math.inf,
@@ -79,7 +79,7 @@ def savedata(keys_or_function=None, include_classes="file",
         - skip_computation (bool).     whether to skip computation if the data is not stored.
         - ext (str/list/tuple):    storing extension. Selects 'storage' functions save_ext, load_ext.
                                    Supported: 'lzma' (default), 'bz2', 'json', 'csv', 'npz'.
-
+        - return_path (bool).      whether to return the path of the saved data.
 
     Attrs:
         - function:                function to which the decorator is applied
@@ -100,7 +100,7 @@ def savedata(keys_or_function=None, include_classes="file",
 
     def _savedata(func):
         @wraps(func)
-        def wrapper(*args, overwrite=overwrite, keys=keys, extra_keys=extra_keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, **kwargs):
+        def wrapper(*args, overwrite=overwrite, keys=keys, extra_keys=extra_keys, save=save, funcname_in_filename=funcname_in_filename, skip_computation=skip_computation, ext=ext, return_path=return_path, **kwargs):
             key_opts = classify_call_attrs(func, args, kwargs, add_pos_only_to_all=config.KEYS_ADD_POSONLY_TO_ALL)
             save_keys = merge_nested_dict(key_opts, keys, key_default="all")
             if extra_keys:
@@ -124,36 +124,40 @@ def savedata(keys_or_function=None, include_classes="file",
 
             if isinstance(ext, str):
                 ext = [ext]
-            for ext_i in ext:
-                saving_path = get_saving_path(ext_i)
-                if skip_computation and not Path(saving_path).exists():
-                    warnings.warn("Skipping computation. Data not stored.", RuntimeWarning)
-                    return SavedataSkippedComputation()
-                elif Path(saving_path).exists() and not overwrite:
-                    try:
-                        result = getattr(storage, f"load_{ext_i}")(saving_path, **load_opts)
-                    except EOFError or LZMAError or _lzma.LZMAError:
-                        if skip_computation:
-                            warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
-                            return SavedataSkippedComputation()
-                        else:
-                            warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                            result = compute(result, ext_i, saving_path)
-                    except KeyboardInterrupt:
-                        raise KeyboardInterrupt
-                    except Exception as e:
-                        print(e)
-                        if skip_computation:
-                            warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
-                            return SavedataSkippedComputation()
-                        else:
-                            warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
-                            result = compute(result, ext_i, saving_path)
-                else:
-                    result = compute(result, ext_i, saving_path)
-            return result
 
-        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation", "ext"])
+            if return_path:
+                result = [get_saving_path(ext_i) for ext_i in ext]
+            else:
+                for ext_i in ext:
+                    saving_path = get_saving_path(ext_i)
+                    if skip_computation and not Path(saving_path).exists():
+                        warnings.warn("Skipping computation. Data not stored.", RuntimeWarning)
+                        return SavedataSkippedComputation()
+                    elif Path(saving_path).exists() and not overwrite:
+                        try:
+                            result = getattr(storage, f"load_{ext_i}")(saving_path, **load_opts)
+                        except EOFError or LZMAError or _lzma.LZMAError:
+                            if skip_computation:
+                                warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                                return SavedataSkippedComputation()
+                            else:
+                                warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                                result = compute(result, ext_i, saving_path)
+                        except KeyboardInterrupt:
+                            raise KeyboardInterrupt
+                        except Exception as e:
+                            print(e)
+                            if skip_computation:
+                                warnings.warn("Corrupted file. Skipping computation ...", RuntimeWarning)
+                                return SavedataSkippedComputation()
+                            else:
+                                warnings.warn("Corrupted file. Recomputing and storing ...", RuntimeWarning)
+                                result = compute(result, ext_i, saving_path)
+                    else:
+                        result = compute(result, ext_i, saving_path)
+                return result
+
+        wrapper.__signature__ = merge_wrapper_signatures(wrapper, ["overwrite", "keys", "save", "funcname_in_filename", "skip_computation", "ext", "return_path"])
         wrapper.__out__ = "data"
         return wrapper
 
