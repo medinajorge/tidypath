@@ -22,7 +22,7 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=
             return str(round(x, ndigits=ndigits)).replace('.', '--')
     elif isinstance(x, int):
         return str(x)
-    elif callable(x):
+    elif callable(x) and hasattr(x, "__name__"):
         return x.__name__
     elif isinstance(x, dict):
         if len(x) >= iterable_maxsize:
