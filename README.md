@@ -1,6 +1,7 @@
 # Tidypath
 
 For people that have to compute and store a large variety of data and/or figures.
+Check the [tidypath and PhD-utils slides](https://github.com/medinajorge/PhD-utils/blob/master/tidypath_and_phdu.odp) for an overview.
 
 ## Keep your files tidy!
 
@@ -46,12 +47,13 @@ Caching data depends on the specific variables set to store, since they define t
 2. Assign `method='original'` to all existing pre-computed files:
 
         add_arg(slow_computation, method='original')
-    
+
 3. Now access is granted for the already computed data, and data corresponding to new methods will be stored in separate files.
 
 Use the functions `add_arg`, `modify_arg`, `delete_arg` to ensure cached data is loaded after modifying function arguments.
 
 ## Example
+- [tidypath and PhD-utils slides](https://github.com/medinajorge/PhD-utils/blob/master/tidypath_and_phdu.odp): instructions and use cases.
 - [Defining functions](https://github.com/medinajorge/tidypath/blob/master/tests/analysis/variable1/measurement1.py)
 - [Calling functions & modifying args](https://github.com/medinajorge/tidypath/blob/master/tests/Example.ipynb)
 

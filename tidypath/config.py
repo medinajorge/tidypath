@@ -1,4 +1,18 @@
-"""Config specs for the decorators 'savedata', 'savefig'."""
+"""
+Config specs for the decorators 'savedata', 'savefig'.
+
+To modify the default config, set the following environmental variables before importing tidypath:
+
+- TIDYPATH_KEYS_DEFAULT
+- TIDYPATH_KEYS_DEFAULT_DATA
+- TIDYPATH_KEYS_DEFAULT_FIG
+- TIDYPATH_KEYS_ADD_POSONLY_TO_ALL
+- TIDYPATH_EXT_DEFAULT_DATA
+- TIDYPATH_EXT_DEFAULT_FIG
+- TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_DATA
+- TIDYPATH_FUNCNAME_IN_FILENAME_DEFAULT_FIG
+- TIDYPATH_RETURN_FIG_DEFAULT
+"""
 
 import os
 import warnings
