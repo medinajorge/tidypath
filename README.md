@@ -1,7 +1,7 @@
 # Tidypath
 
 For people that have to compute and store a large variety of data and/or figures.
-Check the [tidypath and PhD-utils slides](https://github.com/medinajorge/PhD-utils/blob/master/tidypath_and_phdu.odp) for an overview.
+Check the [tidypath and PhD-utils slides](https://github.com/medinajorge/tidypath/blob/master/tidypath_and_phdu.odp) for an overview.
 
 ## Keep your files tidy!
 
