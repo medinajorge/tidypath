@@ -7,6 +7,9 @@ import pandas as pd
 import os
 from copy import deepcopy
 from pathlib import Path
+import time
+import datetime
+from typing import List, Optional, Tuple
 import pickle
 import bz2
 import lzma
@@ -225,3 +228,198 @@ def compress_files(rootDir=parent_dir, extension='.json', compress_to='lzma', mi
             print(pbar.update())
 
     return not_correctly_processed
+
+
+##############################################################################################################################
+"""                                                   IV. Deletion                                                         """
+##############################################################################################################################
+def _delete_files_newer_than(
+    directory: str,
+    dry_run: bool = True,
+    t: float = 1.0,
+    time_unit: str = 'd',
+    recursive: bool = False,
+    file_extensions: Optional[List[str]] = None,
+    exclude_patterns: Optional[List[str]] = None,
+    verbose: bool = True
+) -> Tuple[List[str], List[str]]:
+    """
+    Delete files in a directory that are newer than time [time_unit].
+
+    Args:
+        directory (str): Path to the directory to process
+        dry_run (bool): If True, only simulate deletion (safer default)
+        t (float): Time in seconds (default: 1 day)
+        time_unit (str): Time unit (default: 'd'). Example ['s', 'm', 'h', 'd', 'w']
+        recursive (bool): If True, process subdirectories recursively
+        file_extensions (List[str], optional): Only process files with these extensions
+            Example: ['.txt', '.csv', '.log']
+        exclude_patterns (List[str], optional): Skip files containing these patterns
+            Example: ['backup', 'important', 'keep']
+        verbose (bool): If True, print detailed information
+
+    Returns:
+        Tuple[List[str], List[str]]: (successfully_processed, failed_files)
+
+    Raises:
+        ValueError: If directory doesn't exist or is not a directory
+        PermissionError: If insufficient permissions to access directory
+    """
+
+    # Input validation
+    if not directory or not isinstance(directory, str):
+        raise ValueError("Directory must be a non-empty string")
+
+    dir_path = Path(directory)
+    if not dir_path.exists():
+        raise ValueError(f"Directory does not exist: {directory}")
+
+    if not dir_path.is_dir():
+        raise ValueError(f"Path is not a directory: {directory}")
+
+    # Calculate cutoff time (7 days ago)
+    time_unit_mpl = dict(s=1, m=60, h=3600, d=3600*24, w=3600*24*7)
+    dt = t * time_unit_mpl[time_unit]
+    past_time = time.time() - dt
+    cutoff_datetime = datetime.datetime.fromtimestamp(past_time)
+
+    time_threshold = f'{t} [{time_unit}]'
+
+    if verbose:
+        print(f"{'=' * 60}")
+        print(f"Directory: {directory}")
+        print(f"Mode: {'DRY RUN' if dry_run else 'ACTUAL DELETION'}")
+        print(f"Recursive: {recursive}")
+        print(f"Cutoff time: {cutoff_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"File extensions filter: {file_extensions}")
+        print(f"Exclude patterns: {exclude_patterns}")
+        print(f"{'=' * 60}")
+
+    successfully_processed = []
+    failed_files = []
+
+    def should_process_file(file_path: Path) -> bool:
+        """Check if file should be processed based on filters"""
+
+        # Check file extension filter
+        if file_extensions:
+            if file_path.suffix.lower() not in [ext.lower() for ext in file_extensions]:
+                return False
+
+        # Check exclude patterns
+        if exclude_patterns:
+            file_name = file_path.name.lower()
+            for pattern in exclude_patterns:
+                if pattern.lower() in file_name:
+                    if verbose:
+                        print(f"  SKIPPED (excluded pattern): {file_path}")
+                    return False
+
+        return True
+
+    def process_file(file_path: Path) -> bool:
+        """Process a single file - check age and delete if newer than threshold"""
+        try:
+            # Get file modification time
+            file_mtime = file_path.stat().st_mtime
+            file_datetime = datetime.datetime.fromtimestamp(file_mtime)
+
+            # Check if file is newer than theshold
+            if file_mtime > past_time:
+                if verbose:
+                    print(f"  NEWER THAN {time_threshold}: {file_path}")
+                    print(f"    Modified: {file_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
+
+                if not dry_run:
+                    file_path.unlink()  # Delete the file
+                    if verbose:
+                        print(f"    DELETED: {file_path}")
+                else:
+                    if verbose:
+                        print(f"    WOULD DELETE: {file_path}")
+
+                successfully_processed.append(str(file_path))
+                return True
+            else:
+                if verbose:
+                    print(f"  OLDER THAN {time_threshold} (keeping): {file_path}")
+                    print(f"    Modified: {file_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
+                return False
+
+        except (OSError, IOError) as e:
+            error_msg = f"Error processing {file_path}: {str(e)}"
+            if verbose:
+                print(f"  ERROR: {error_msg}")
+            failed_files.append(error_msg)
+            return False
+
+    try:
+        # Get files to process
+        if recursive:
+            file_iterator = dir_path.rglob('*')
+        else:
+            file_iterator = dir_path.iterdir()
+
+        # Process files
+        total_files = 0
+        processed_files = 0
+
+        for item in file_iterator:
+            if item.is_file():
+                total_files += 1
+
+                if should_process_file(item):
+                    if process_file(item):
+                        processed_files += 1
+
+        # Summary
+        if verbose:
+            print(f"\n{'=' * 60}")
+            print(f"SUMMARY:")
+            print(f"Total files examined: {total_files}")
+            print(f"Files newer than {time_threshold}: {processed_files}")
+            print(f"Files {'would be deleted' if dry_run else 'deleted'}: {len(successfully_processed)}")
+            print(f"Errors encountered: {len(failed_files)}")
+            print(f"{'=' * 60}")
+
+            if failed_files:
+                print("\nERRORS:")
+                for error in failed_files:
+                    print(f"  - {error}")
+
+    except PermissionError as e:
+        raise PermissionError(f"Insufficient permissions to access directory: {directory}") from e
+    except Exception as e:
+        raise RuntimeError(f"Unexpected error processing directory: {str(e)}") from e
+
+    return successfully_processed, failed_files
+
+
+def delete_files_newer_than(directory: str, dry_run: bool = True, t: float = 1.0, time_unit='d') -> None:
+    """
+    Simplified version - just delete files newer than t [time_unit]
+
+    Args:
+        directory (str): Path to the directory to process
+        dry_run (bool): If True, only simulate deletion (safer default)
+        t: float: Time threshold in units of time_unit
+        time_unit (str): Unit of time, e.g. 'd' for days
+    """
+    try:
+        processed, failed = _delete_files_newer_than(
+            directory=directory,
+            dry_run=dry_run,
+            t=t,
+            time_unit=time_unit,
+            verbose=True
+        )
+
+        if not dry_run and processed:
+            print(f"\nSUCCESS: Deleted {len(processed)} files newer than {time} [{time_unit}]")
+        elif dry_run and processed:
+            print(f"\nDRY RUN: Would delete {len(processed)} files newer than {time} [{time_unit}]")
+        else:
+            print(f"\nNo files newer than {time} [{time_unit}] found in {directory}")
+
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
