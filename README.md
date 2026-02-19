@@ -1,7 +1,10 @@
 # Tidypath
 
-For people that have to compute and store a large variety of data and/or figures.
-Check the [tidypath and PhD-utils slides](https://github.com/medinajorge/tidypath/blob/master/tidypath_and_phdu.odp) for an overview.
+**Tidypath** automates the saving and loading of data and figures with a single line of code. It ensures deterministic naming based on call arguments and applies optimal compression out of the box.
+
+**[View Overview Slides](https://github.com/medinajorge/tidypath/blob/master/tidypath_and_phdu.odp)**
+
+![Overview](assets/slide.png)
 
 ## Keep your files tidy!
 
