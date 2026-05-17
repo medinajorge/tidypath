@@ -62,9 +62,9 @@ def class_path(func, include_classes="file", skip=1):
             if include_classes == "file":
                 clsmembers = inspect.getmembers(sys.modules[module], inspect.isclass)
                 cls_names, clss = zip(*clsmembers)
-                class_tree = "/".join([c.__name__ for c in func_class.mro()[:-skip][::-1] if c in clss])
+                class_tree = os.sep.join([c.__name__ for c in func_class.mro()[:-skip][::-1] if c in clss])
             elif include_classes == "all":
-                class_tree = "/".join([c.__name__ for c in func.__class__.mro()[:-skip][::-1]])
+                class_tree = os.sep.join([c.__name__ for c in func.__class__.mro()[:-skip][::-1]])
             else:
                 raise ValueError(f"include_classes: {include_classes} not valid. Available: 'file', 'all', ''.")
         else:
@@ -99,7 +99,7 @@ def saving_path(Dir, ext, func, keys={}, subfolder="", return_dir=False, funcnam
         return parentDir
     else:
         if funcname_in_filename:
-            filename = parentDir.split("/")[-1] + f"_{dict_to_id(keys, iterable_maxsize=iterable_maxsize)}_.{ext}"
+            filename = os.path.basename(os.path.normpath(parentDir)) + f"_{dict_to_id(keys, iterable_maxsize=iterable_maxsize)}_.{ext}"
         else:
             filename = f"{dict_to_id(keys, iterable_maxsize=iterable_maxsize)}_.{ext}"
         return os.path.join(parentDir, filename)
@@ -299,7 +299,7 @@ class ClassPath(Organizer):
 
     @classmethod
     def inheritance_path(cls, skip=2):
-        return "/".join([c.__name__.lower() for c in cls.mro()[:-skip][::-1]])
+        return os.sep.join([c.__name__.lower() for c in cls.mro()[:-skip][::-1]])
 
     @classmethod
     def create_dir(cls, dirKey, depth=2):
