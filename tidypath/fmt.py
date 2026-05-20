@@ -11,6 +11,21 @@ import hashlib
 """                                                  I. Getopt utils                                                       """
 ##############################################################################################################################
 
+invalid_str = {'<': 'lthan',
+               '>': 'gthan',
+               ':': 'colon',
+               '"': 'dquote',
+               '/': 'fslash',
+               '\\': 'bslash',
+               '|': 'pipe',
+               '?': 'qmark',
+               '*': 'ast'
+               }
+
+# Pre-compute the translation table.
+# str.translate() requires dict keys to be integer Unicode ordinals.
+STR_TRANS_TABLE = {ord(key): value for key, value in invalid_str.items()}
+
 def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=3):
     """x -> string version of x"""
     if isinstance(x, float):
@@ -35,7 +50,7 @@ def encoder(x, ndigits=2, iterables=(list, tuple, np.ndarray), iterable_maxsize=
         else:
             return '-'.join([encoder(sub_x) for sub_x in x])
     else:
-        return str(x)
+        return str(x).translate(STR_TRANS_TABLE)
 
 def decoder(x, iterables=(list, tuple, np.ndarray)):
     """string version of x -> x"""
