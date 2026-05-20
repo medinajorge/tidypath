@@ -86,7 +86,12 @@ def saving_path(Dir, ext, func, keys={}, subfolder="", return_dir=False, funcnam
                                  )
         warnings.warn(f"Module {module_head} is '__main__'. Saving in {parentDir}.", RuntimeWarning)
     else:
-        path_split = func_path.split(module_head + '/')
+        # Normalize the path so it uses the correct slashes for the current OS
+        normalized_path = os.path.normpath(func_path)
+
+        # Split using the OS-specific path separator (os.path.sep)
+        path_split = normalized_path.split(module_head + os.path.sep)
+
         parentDir = os.path.join(path_split[0],
                                  Dir,
                                  subfolder,
